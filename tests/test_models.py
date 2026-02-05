@@ -1,4 +1,5 @@
 import json
+import typing as tp
 
 import pytest
 from pydantic import ValidationError
@@ -7,8 +8,10 @@ from pydantic_json_patch import RemoveOp
 
 
 def test_remove_op_can_be_parsed():
-    data = dict(op="remove", path="/foo/bar")
-    assert RemoveOp.model_validate_json(json.dumps(data)) == RemoveOp(**data)
+    op: tp.Literal["remove"] = "remove"
+    path = "/foo/bar"
+    json_ = json.dumps(dict(op=op, path=path))
+    assert RemoveOp.model_validate_json(json_) == RemoveOp(op=op, path=path)
 
 
 @pytest.mark.parametrize(
