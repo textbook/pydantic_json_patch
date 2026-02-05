@@ -24,9 +24,8 @@ class AddOp(_ValueOp, tp.Generic[T]):
     op: tp.Literal["add"]
 
 
-class CopyOp(_BaseOp):
+class _FromOp(_BaseOp):
     from_: str = Field(alias="from", pattern=_JSON_POINTER)
-    op: tp.Literal["copy"]
 
     @model_validator(mode="before")
     @classmethod
@@ -39,6 +38,14 @@ class CopyOp(_BaseOp):
         ):
             data["from"] = data.pop("from_")
         return data
+
+
+class CopyOp(_FromOp):
+    op: tp.Literal["copy"]
+
+
+class MoveOp(_FromOp):
+    op: tp.Literal["move"]
 
 
 class RemoveOp(_BaseOp):

@@ -4,7 +4,7 @@ import typing as tp
 import pytest
 from pydantic import ValidationError
 
-from pydantic_json_patch import AddOp, CopyOp, RemoveOp, ReplaceOp, TestOp
+from pydantic_json_patch import AddOp, CopyOp, MoveOp, RemoveOp, ReplaceOp, TestOp
 
 
 def test_add_op_can_be_parsed():
@@ -22,6 +22,16 @@ def test_copy_op_can_be_parsed():
     json_ = json.dumps({"from": from_, "op": op, "path": path})
     assert (
         CopyOp.model_validate_json(json_) == CopyOp(from_=from_, op=op, path=path)  # type: ignore[missing-argument,unknown-argument] -- ty can't follow the alias
+    )
+
+
+def test_move_op_can_be_parsed():
+    op: tp.Literal["move"] = "move"
+    path = "/foo/bar"
+    from_ = "/baz/qux"
+    json_ = json.dumps({"from": from_, "op": op, "path": path})
+    assert (
+        MoveOp.model_validate_json(json_) == MoveOp(from_=from_, op=op, path=path)  # type: ignore[missing-argument,unknown-argument] -- ty can't follow the alias
     )
 
 
