@@ -52,3 +52,18 @@ def test_invalid_path_is_not_allowed(path: str):
     data = dict(op="remove", path=path)
     with pytest.raises(ValidationError):
         RemoveOp.model_validate(data)
+
+
+def test_additional_members_are_ignored():
+    """Per the specification:
+
+    Members that are not explicitly defined for the operation in
+    question MUST be ignored (i.e., the operation will complete as if
+    the undefined member did not appear in the object).
+
+    """
+    op: tp.Literal["test"] = "test"
+    path = "/foo/bar"
+    value = 123
+    json_ = json.dumps(dict(baz="qux", foo="bar", op=op, path=path, value=value))
+    assert TestOp.model_validate_json(json_) == TestOp(op=op, path=path, value=value)

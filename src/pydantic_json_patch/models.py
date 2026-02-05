@@ -9,7 +9,7 @@ T = tp.TypeVar("T")
 
 
 class _BaseOp(BaseModel):
-    model_config = ConfigDict(extra="forbid", frozen=True)
+    model_config = ConfigDict(frozen=True)
 
     op: tp.Literal["add", "remove"]
     path: str = Field(pattern=_JSON_POINTER)
