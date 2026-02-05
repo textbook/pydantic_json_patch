@@ -5,7 +5,7 @@ from functools import cached_property
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 from pydantic_core.core_schema import ValidationInfo
 
-_JSON_POINTER = re.compile(r"^(/[^/]+)*$")
+_JSON_POINTER = re.compile(r"^(?:/(?:[^/~]|~[01])+)*$")
 
 T = tp.TypeVar("T")
 Tokens: tp.TypeAlias = tuple[str, ...]

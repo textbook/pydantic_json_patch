@@ -80,6 +80,7 @@ def test_invalid_path_is_not_allowed(path: str):
         pytest.param("foo/bar", id="no leading slash"),
         pytest.param("//foo/bar", id="two consecutive slashes"),
         pytest.param("/foo/bar/", id="trailing slash"),
+        pytest.param("/foo~bar", id="unescaped tilde"),
     ],
 )
 def test_invalid_from_is_not_allowed(from_: str):
