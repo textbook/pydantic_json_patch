@@ -29,3 +29,7 @@ class RemoveOp(_BaseOp):
 
 class ReplaceOp(_ValueOp, tp.Generic[T]):
     op: tp.Literal["replace"]
+
+
+class TestOp(_ValueOp, tp.Generic[T]):
+    op: tp.Literal["test"]
