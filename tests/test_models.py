@@ -4,7 +4,7 @@ import typing as tp
 import pytest
 from pydantic import ValidationError
 
-from pydantic_json_patch import AddOp, RemoveOp, ReplaceOp, TestOp
+from pydantic_json_patch import AddOp, CopyOp, RemoveOp, ReplaceOp, TestOp
 
 
 def test_add_op_can_be_parsed():
@@ -13,6 +13,16 @@ def test_add_op_can_be_parsed():
     value = 123
     json_ = json.dumps(dict(op=op, path=path, value=value))
     assert AddOp.model_validate_json(json_) == AddOp(op=op, path=path, value=value)
+
+
+def test_copy_op_can_be_parsed():
+    op: tp.Literal["copy"] = "copy"
+    path = "/foo/bar"
+    from_ = "/baz/qux"
+    json_ = json.dumps({"from": from_, "op": op, "path": path})
+    assert (
+        CopyOp.model_validate_json(json_) == CopyOp(from_=from_, op=op, path=path)  # type: ignore[missing-argument,unknown-argument] -- ty can't follow the alias
+    )
 
 
 def test_remove_op_can_be_parsed():
@@ -52,6 +62,20 @@ def test_invalid_path_is_not_allowed(path: str):
     data = dict(op="remove", path=path)
     with pytest.raises(ValidationError):
         RemoveOp.model_validate(data)
+
+
+@pytest.mark.parametrize(
+    "from_",
+    [
+        pytest.param("foo/bar", id="no leading slash"),
+        pytest.param("//foo/bar", id="two consecutive slashes"),
+        pytest.param("/foo/bar/", id="trailing slash"),
+    ],
+)
+def test_invalid_from_is_not_allowed(from_: str):
+    data = dict(from_=from_, op="copy", path="/foo/bar")
+    with pytest.raises(ValidationError):
+        CopyOp.model_validate(data)
 
 
 def test_additional_members_are_ignored():
