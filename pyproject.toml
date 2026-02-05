@@ -1,0 +1,35 @@
+[project]
+name = "pydantic-json-patch"
+version = "0.0.0"
+description = "Pydantic models for implementing JSON Patch."
+readme = "README.md"
+authors = [
+    { name = "Jonathan Sharpe", email = "mail@jonrshar.pe" }
+]
+requires-python = ">=3.10"
+dependencies = []
+license = "ISC"
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Framework :: FastAPI",
+    "Framework :: Pydantic",
+    "Intended Audience :: Developers",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
+    "Topic :: File Formats :: JSON",
+    "Topic :: File Formats :: JSON :: JSON Schema",
+]
+
+[build-system]
+requires = ["uv_build>=0.9.27,<0.10.0"]
+build-backend = "uv_build"
+
+[dependency-groups]
+dev = [
+    "pytest>=9.0.2",
+    "ruff>=0.15.0",
+]

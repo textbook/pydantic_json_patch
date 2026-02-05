@@ -1,0 +1,17 @@
+import pathlib
+import sys
+
+import pytest
+
+from pydantic_json_patch import __version__
+
+
+@pytest.mark.skipif(
+    sys.version_info < (3, 11), reason="tomllib not available in Python 3.10"
+)
+def test_version_exposed():
+    import tomllib
+
+    with open(pathlib.Path(__file__).parent / ".." / "pyproject.toml", "rb") as f:
+        data = tomllib.load(f)
+    assert data["project"]["version"] == __version__
