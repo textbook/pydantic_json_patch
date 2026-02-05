@@ -101,3 +101,19 @@ def test_additional_members_are_ignored():
     value = 123
     json_ = json.dumps(dict(baz="qux", foo="bar", op=op, path=path, value=value))
     assert TestOp.model_validate_json(json_) == TestOp(op=op, path=path, value=value)
+
+
+@pytest.mark.parametrize(
+    "path, tokens",
+    [
+        pytest.param("", (), id="empty path"),
+        pytest.param("/foo/bar", ("foo", "bar"), id="simple path"),
+        pytest.param("/foo~1bar", ("foo/bar",), id="includes slash"),
+        pytest.param("/foo~0bar", ("foo~bar",), id="includes tilde"),
+        pytest.param("/foo~0123~1bar", ("foo~123/bar",), id="includes both"),
+    ],
+)
+def test_path_tokens_exposed(path: str, tokens: tuple[str, ...]):
+    op = CopyOp(from_=path, op="copy", path=path)  # type: ignore[missing-argument,unknown-argument] -- ty can't follow the alias
+    assert op.from_tokens == tokens
+    assert op.path_tokens == tokens
