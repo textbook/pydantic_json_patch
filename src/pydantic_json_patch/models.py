@@ -15,10 +15,17 @@ class _BaseOp(BaseModel):
     path: str = Field(pattern=_JSON_POINTER)
 
 
-class AddOp(_BaseOp, tp.Generic[T]):
-    op: tp.Literal["add"]
+class _ValueOp(_BaseOp, tp.Generic[T]):
     value: T
+
+
+class AddOp(_ValueOp, tp.Generic[T]):
+    op: tp.Literal["add"]
 
 
 class RemoveOp(_BaseOp):
     op: tp.Literal["remove"]
+
+
+class ReplaceOp(_ValueOp, tp.Generic[T]):
+    op: tp.Literal["replace"]
