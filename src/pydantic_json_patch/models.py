@@ -13,7 +13,7 @@ class _BaseOp(BaseModel):
     model_config = ConfigDict(frozen=True)
 
     op: tp.Literal["add", "remove"]
-    path: str = Field(pattern=_JSON_POINTER)
+    path: str = Field(examples=["/a/b/c"], pattern=_JSON_POINTER)
 
 
 class _ValueOp(_BaseOp, tp.Generic[T]):
@@ -25,7 +25,7 @@ class AddOp(_ValueOp, tp.Generic[T]):
 
 
 class _FromOp(_BaseOp):
-    from_: str = Field(alias="from", pattern=_JSON_POINTER)
+    from_: str = Field(alias="from", examples=["/a/b/d"], pattern=_JSON_POINTER)
 
     @model_validator(mode="before")
     @classmethod
