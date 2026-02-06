@@ -59,8 +59,10 @@ def test_sensible_property_examples(test_client: TestClient):
 def test_sensible_titles(op: str, test_client: TestClient):
     res = test_client.get("/openapi.json")
     document = res.json()
-    assert document["components"]["schemas"][f"{op.capitalize()}Op"].get("title") == f"JsonPatch{op.capitalize()}Operation"
-
+    assert (
+        document["components"]["schemas"][f"{op.capitalize()}Op"].get("title")
+        == f"JsonPatch{op.capitalize()}Operation"
+    )
 
 
 @pytest.fixture(name="test_client")

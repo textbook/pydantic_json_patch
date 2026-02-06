@@ -10,6 +10,8 @@ _JSON_POINTER = re.compile(r"^(?:/(?:[^/~]|~[01])+)*$")
 T = tp.TypeVar("T")
 Tokens: tp.TypeAlias = tuple[str, ...]
 
+# region base models
+
 
 class _BaseOp(BaseModel):
     model_config = ConfigDict(
@@ -36,15 +38,6 @@ class _BaseOp(BaseModel):
         )
 
 
-class _ValueOp(_BaseOp, tp.Generic[T]):
-    value: T = Field(examples=[42])
-    """The value to use in the operation."""
-
-
-class AddOp(_ValueOp, tp.Generic[T]):
-    op: tp.Literal["add"]
-
-
 class _FromOp(_BaseOp):
     from_: str = Field(alias="from", examples=["/a/b/d"], pattern=_JSON_POINTER)
     """A JSON pointer representing the path to apply the operation from."""
@@ -67,6 +60,20 @@ class _FromOp(_BaseOp):
         return self._parse_pointer(self.from_)
 
 
+class _ValueOp(_BaseOp, tp.Generic[T]):
+    value: T = Field(examples=[42])
+    """The value to use in the operation."""
+
+
+# endregion
+
+# region public models
+
+
+class AddOp(_ValueOp, tp.Generic[T]):
+    op: tp.Literal["add"]
+
+
 class CopyOp(_FromOp):
     op: tp.Literal["copy"]
 
@@ -85,3 +92,6 @@ class ReplaceOp(_ValueOp, tp.Generic[T]):
 
 class TestOp(_ValueOp, tp.Generic[T]):
     op: tp.Literal["test"]
+
+
+# endregion
