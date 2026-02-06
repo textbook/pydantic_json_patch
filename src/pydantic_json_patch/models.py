@@ -2,8 +2,7 @@ import re
 import typing as tp
 from functools import cached_property
 
-from pydantic import BaseModel, ConfigDict, Field, model_validator
-from pydantic_core.core_schema import ValidationInfo
+from pydantic import BaseModel, ConfigDict, Field, ValidationInfo, model_validator
 
 _JSON_POINTER = re.compile(r"^(?:/(?:[^/~]|~[01])+)*$")
 
