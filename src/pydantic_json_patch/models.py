@@ -14,11 +14,15 @@ Tokens: tp.TypeAlias = tuple[str, ...]
 class _BaseOp(BaseModel):
     model_config = ConfigDict(frozen=True)
 
-    op: tp.Literal["add", "remove"]
+    op: str
+    """The operation being represented."""
+
     path: str = Field(examples=["/a/b/c"], pattern=_JSON_POINTER)
+    """A JSON pointer representing the path to apply the operation to."""
 
     @cached_property
     def path_tokens(self) -> Tokens:
+        """The decoded tokens in the 'path' JSON pointer."""
         return self._parse_pointer(self.path)
 
     @classmethod
@@ -31,6 +35,7 @@ class _BaseOp(BaseModel):
 
 class _ValueOp(_BaseOp, tp.Generic[T]):
     value: T
+    """The value to use in the operation."""
 
 
 class AddOp(_ValueOp, tp.Generic[T]):
@@ -39,6 +44,7 @@ class AddOp(_ValueOp, tp.Generic[T]):
 
 class _FromOp(_BaseOp):
     from_: str = Field(alias="from", examples=["/a/b/d"], pattern=_JSON_POINTER)
+    """A JSON pointer representing the path to apply the operation from."""
 
     @model_validator(mode="before")
     @classmethod
@@ -54,6 +60,7 @@ class _FromOp(_BaseOp):
 
     @cached_property
     def from_tokens(self) -> Tokens:
+        """The decoded tokens in the 'from' JSON pointer."""
         return self._parse_pointer(self.from_)
 
 
