@@ -53,6 +53,14 @@ def test_sensible_path_examples(test_client: TestClient):
                 assert schema["properties"]["from"].get("examples") == ["/a/b/d"]
 
 
+@pytest.mark.parametrize("op", ["add", "copy", "move", "remove", "replace", "test"])
+def test_sensible_titles(op: str, test_client: TestClient):
+    res = test_client.get("/openapi.json")
+    document = res.json()
+    assert document["components"]["schemas"][f"{op.capitalize()}Op"].get("title") == f"JsonPatch{op.capitalize()}Operation"
+
+
+
 @pytest.fixture(name="test_client")
 def _create_test_client() -> TestClient:
     return TestClient(app=app)

@@ -12,7 +12,10 @@ Tokens: tp.TypeAlias = tuple[str, ...]
 
 
 class _BaseOp(BaseModel):
-    model_config = ConfigDict(frozen=True)
+    model_config = ConfigDict(
+        frozen=True,
+        model_title_generator=lambda t: f"JsonPatch{t.__name__}eration",
+    )
 
     op: str
     """The operation being represented."""
