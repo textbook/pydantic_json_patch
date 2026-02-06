@@ -43,7 +43,7 @@ def test_invalid_patch_rejected(test_client: TestClient, body: tp.Any):
     assert res.status_code == HTTPStatus.UNPROCESSABLE_ENTITY
 
 
-def test_sensible_path_examples(test_client: TestClient):
+def test_sensible_property_examples(test_client: TestClient):
     res = test_client.get("/openapi.json")
     document = res.json()
     for schema in document["components"]["schemas"].values():
@@ -51,6 +51,8 @@ def test_sensible_path_examples(test_client: TestClient):
             assert schema["properties"]["path"].get("examples") == ["/a/b/c"]
             if "from" in schema["properties"]:
                 assert schema["properties"]["from"].get("examples") == ["/a/b/d"]
+            if "value" in schema["properties"]:
+                assert schema["properties"]["value"].get("examples") == [42]
 
 
 @pytest.mark.parametrize("op", ["add", "copy", "move", "remove", "replace", "test"])

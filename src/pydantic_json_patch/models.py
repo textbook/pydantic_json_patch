@@ -37,7 +37,7 @@ class _BaseOp(BaseModel):
 
 
 class _ValueOp(_BaseOp, tp.Generic[T]):
-    value: T
+    value: T = Field(examples=[42])
     """The value to use in the operation."""
 
 
