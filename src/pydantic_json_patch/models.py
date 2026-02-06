@@ -7,6 +7,7 @@ from pydantic import BaseModel, ConfigDict, Field, ValidationInfo, model_validat
 _JSON_POINTER = re.compile(r"^(?:/(?:[^/~]|~[01])+)*$")
 
 T = tp.TypeVar("T")
+Op: tp.TypeAlias = tp.Literal["add", "copy", "move", "remove", "replace", "test"]
 Tokens: tp.TypeAlias = tuple[str, ...]
 
 # region base models
@@ -18,7 +19,7 @@ class _BaseOp(BaseModel):
         model_title_generator=lambda t: f"JsonPatch{t.__name__}eration",
     )
 
-    op: str
+    op: Op
     """The operation being represented."""
 
     path: str = Field(examples=["/a/b/c"], pattern=_JSON_POINTER)
