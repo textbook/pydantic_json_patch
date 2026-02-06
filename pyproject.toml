@@ -41,5 +41,8 @@ dev = [
     "ty>=0.0.15",
 ]
 
+[tool.coverage.run]
+omit = ["tests/**"]
+
 [tool.pytest.ini_options]
 python_classes = []  # avoid trying to run TestOp as a test
