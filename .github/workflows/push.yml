@@ -1,4 +1,5 @@
-name: push.yml
+name: Python uv CI
+
 on:
   push:
     branches:
@@ -27,4 +28,5 @@ jobs:
       - run: uv sync --dev --locked
       - run: uv run ty check
       - run: uv run ruff check
-      - run: uv run pytest
+      - run: uv run coverage run --module pytest
+      - run: uv run coverage report
