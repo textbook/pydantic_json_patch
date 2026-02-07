@@ -3,6 +3,7 @@ import typing as tp
 from functools import cached_property
 
 from pydantic import BaseModel, ConfigDict, Field, ValidationInfo, model_validator
+import typing_extensions as tx
 
 _JSON_POINTER = re.compile(r"^(?:/(?:[^/~]|~[01])+)*$")
 
@@ -19,6 +20,12 @@ class _BaseOp(BaseModel):
         model_title_generator=lambda t: f"JsonPatch{t.__name__}eration",
     )
 
+    @classmethod
+    def create(cls, *, path: str | Tokens, **kwargs) -> tx.Self:
+        (op,) = tp.get_args(cls.model_fields["op"].annotation)
+        pointer = path if isinstance(path, str) else cls._dump_pointer(path)
+        return cls(op=op, path=pointer, **kwargs)
+
     op: Op
     """The operation being represented."""
 
@@ -28,10 +35,16 @@ class _BaseOp(BaseModel):
     @cached_property
     def path_tokens(self) -> Tokens:
         """The decoded tokens in the 'path' JSON pointer."""
-        return self._parse_pointer(self.path)
+        return self._load_pointer(self.path)
 
-    @classmethod
-    def _parse_pointer(cls, pointer: str) -> Tokens:
+    @staticmethod
+    def _dump_pointer(pointer: Tokens) -> str:
+        return "/".join(
+            ["", *(token.replace("~", "~0").replace("/", "~1") for token in pointer)]
+        )
+
+    @staticmethod
+    def _load_pointer(pointer: str) -> Tokens:
         return tuple(
             token.replace("~1", "/").replace("~0", "~")
             for token in pointer.split("/")[1:]
@@ -39,6 +52,11 @@ class _BaseOp(BaseModel):
 
 
 class _FromOp(_BaseOp):
+    @classmethod
+    def create(cls, *, path: str | Tokens, from_: str | Tokens) -> tx.Self:  # type: ignore[invalid-method-override]
+        pointer = from_ if isinstance(from_, str) else cls._dump_pointer(from_)
+        return super().create(path=path, **{"from": pointer})
+
     from_: str = Field(alias="from", examples=["/a/b/d"], pattern=_JSON_POINTER)
     """A JSON pointer representing the path to apply the operation from."""
 
@@ -57,10 +75,14 @@ class _FromOp(_BaseOp):
     @cached_property
     def from_tokens(self) -> Tokens:
         """The decoded tokens in the 'from' JSON pointer."""
-        return self._parse_pointer(self.from_)
+        return self._load_pointer(self.from_)
 
 
 class _ValueOp(_BaseOp, tp.Generic[T]):
+    @classmethod
+    def create(cls, *, path: str | Tokens, value: T) -> tx.Self:  # type: ignore[invalid-method-override]
+        return super().create(path=path, value=value)
+
     value: T = Field(examples=[42])
     """The value to use in the operation."""
 
@@ -83,6 +105,10 @@ class MoveOp(_FromOp):
 
 
 class RemoveOp(_BaseOp):
+    @classmethod
+    def create(cls, *, path: str | Tokens) -> tx.Self:  # type: ignore[invalid-method-override]
+        return super().create(path=path)
+
     op: tp.Literal["remove"]
 
 

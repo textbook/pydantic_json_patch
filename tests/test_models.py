@@ -15,6 +15,14 @@ def test_add_op_can_be_parsed():
     assert AddOp.model_validate_json(json_) == AddOp(op=op, path=path, value=value)
 
 
+def test_add_op_can_be_created():
+    path = "/foo/bar"
+    value = 123
+    assert AddOp.create(path=path, value=value) == AddOp(
+        op="add", path=path, value=value
+    )
+
+
 def test_copy_op_can_be_parsed():
     op: tp.Literal["copy"] = "copy"
     path = "/foo/bar"
@@ -23,6 +31,11 @@ def test_copy_op_can_be_parsed():
     assert (
         CopyOp.model_validate_json(json_) == CopyOp(from_=from_, op=op, path=path)  # type: ignore[missing-argument,unknown-argument] -- ty can't follow the alias
     )
+
+
+def test_copy_op_can_be_created():
+    path = "/foo/bar"
+    assert CopyOp.create(path=path, from_=()) == CopyOp(from_="", op="copy", path=path)  # type: ignore[missing-argument,unknown-argument] -- ty can't follow the alias
 
 
 def test_move_op_can_be_parsed():
@@ -40,6 +53,21 @@ def test_remove_op_can_be_parsed():
     path = "/foo/bar"
     json_ = json.dumps(dict(op=op, path=path))
     assert RemoveOp.model_validate_json(json_) == RemoveOp(op=op, path=path)
+
+
+@pytest.mark.parametrize(
+    "tokens, path",
+    [
+        pytest.param("/foo/bar", "/foo/bar", id="string path"),
+        pytest.param(("foo", "bar"), "/foo/bar", id="simple path"),
+        pytest.param((), "", id="empty"),
+        pytest.param(("foo~bar", "baz"), "/foo~0bar/baz", id="includes tilde"),
+        pytest.param(("foo/bar", "baz"), "/foo~1bar/baz", id="includes slash"),
+    ],
+)
+def test_remove_op_can_be_created(tokens: str | tuple[str, ...], path: str):
+    op: RemoveOp = RemoveOp.create(path=tokens)
+    assert op == RemoveOp(op="remove", path=path)
 
 
 def test_replace_op_can_be_parsed():
