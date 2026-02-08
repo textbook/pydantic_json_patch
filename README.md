@@ -97,6 +97,16 @@ and list the models along with the other schemas:
 
 [![Screenshot of Swagger UI schema list][swagger-schemas]][swagger-schemas]
 
+## Development
+
+This project uses [uv] for managing dependencies.
+Having installed uv, you can set the project up for local development with:
+
+```shell
+uv sync
+uv run pre-commit install
+```
+
   [ci-badge]: https://github.com/textbook/pydantic_json_patch/actions/workflows/push.yml/badge.svg
   [ci-page]: https://github.com/textbook/pydantic_json_patch/actions/workflows/push.yml
   [coverage-badge]: https://coveralls.io/repos/github/textbook/pydantic_json_patch/badge.svg?branch=main
@@ -110,3 +120,4 @@ and list the models along with the other schemas:
   [pypi-page]: https://pypi.org/project/pydantic-json-patch/
   [swagger-example]: https://github.com/textbook/pydantic_json_patch/blob/main/docs/swagger-example.png?raw=true
   [swagger-schemas]: https://github.com/textbook/pydantic_json_patch/blob/main/docs/swagger-schemas.png?raw=true
+  [uv]: https://docs.astral.sh/uv/
