@@ -1,5 +1,8 @@
 # Pydantic JSON Patch
 
+[![Python uv CI][ci-badge]][ci-page]
+[![Coverage Status][coverage-badge]][coverage-page]
+
 [Pydantic] models for implementing [JSON Patch].
 
 ## Installation
@@ -93,6 +96,10 @@ and list the models along with the other schemas:
 
 [![Screenshot of Swagger UI schema list][swagger-schemas]][swagger-schemas]
 
+  [ci-badge]: https://github.com/textbook/pydantic_json_patch/actions/workflows/push.yml/badge.svg
+  [ci-page]: https://github.com/textbook/pydantic_json_patch/actions/workflows/push.yml
+  [coverage-badge]: https://coveralls.io/repos/github/textbook/pydantic_json_patch/badge.svg?branch=main
+  [coverage-page]: https://coveralls.io/github/textbook/pydantic_json_patch?branch=main
   [fastapi]: https://fastapi.tiangolo.com/
   [json patch]: https://datatracker.ietf.org/doc/html/rfc6902/
   [json pointer]: https://datatracker.ietf.org/doc/html/rfc6901/
