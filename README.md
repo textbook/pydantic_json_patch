@@ -107,17 +107,48 @@ uv sync
 uv run pre-commit install
 ```
 
+The pre-commit hooks will ensure that the code style checks (using [isort] and [ruff]) are applied.
+
+### Testing
+
+The test suite uses [pytest] and can be run with:
+
+```shell
+uv run pytest
+```
+
+Additionally, there is [ty] type-checking that can be run with:
+
+```shell
+uv run ty check
+```
+
+### FastAPI
+
+You can preview the FastAPI/Swagger documentation by running:
+
+```shell
+uv run fastapi dev tests/app.py
+```
+
+and visiting the Documentation link that's logged in the console.
+This will auto-restart as you make changes.
+
   [ci-badge]: https://github.com/textbook/pydantic_json_patch/actions/workflows/push.yml/badge.svg
   [ci-page]: https://github.com/textbook/pydantic_json_patch/actions/workflows/push.yml
   [coverage-badge]: https://coveralls.io/repos/github/textbook/pydantic_json_patch/badge.svg?branch=main
   [coverage-page]: https://coveralls.io/github/textbook/pydantic_json_patch?branch=main
   [fastapi]: https://fastapi.tiangolo.com/
+  [isort]: https://pycqa.github.io/isort/
   [json patch]: https://datatracker.ietf.org/doc/html/rfc6902/
   [json pointer]: https://datatracker.ietf.org/doc/html/rfc6901/
   [pydantic]: https://docs.pydantic.dev/latest/
   [pypi]: https://pypi.org/
   [pypi-badge]: https://img.shields.io/pypi/v/pydantic-json-patch?logo=python&logoColor=white&label=PyPI
   [pypi-page]: https://pypi.org/project/pydantic-json-patch/
+  [pytest]: https://docs.pytest.org/en/stable/
+  [ruff]: https://docs.astral.sh/ruff/
   [swagger-example]: https://github.com/textbook/pydantic_json_patch/blob/main/docs/swagger-example.png?raw=true
   [swagger-schemas]: https://github.com/textbook/pydantic_json_patch/blob/main/docs/swagger-schemas.png?raw=true
+  [ty]: https://docs.astral.sh/ty/
   [uv]: https://docs.astral.sh/uv/
