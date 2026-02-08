@@ -2,6 +2,14 @@
 
 [Pydantic] models for implementing [JSON Patch].
 
+## Installation
+
+_Pydantic JSON Patch_ is published to [PyPI], and can be installed with e.g.:
+
+```shell
+pip install pydantic-json-patch
+```
+
 ## Models
 
 A model is provided for each of the six JSON Patch operations:
@@ -89,5 +97,6 @@ and list the models along with the other schemas:
   [json patch]: https://datatracker.ietf.org/doc/html/rfc6902/
   [json pointer]: https://datatracker.ietf.org/doc/html/rfc6901/
   [pydantic]: https://docs.pydantic.dev/latest/
+  [pypi]: https://pypi.org/
   [swagger-example]: docs/swagger-example.png
   [swagger-schemas]: docs/swagger-schemas.png

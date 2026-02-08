@@ -30,3 +30,67 @@ jobs:
       - run: uv run ruff check
       - run: uv run coverage run --module pytest
       - run: uv run coverage report
+
+  build:
+    runs-on: ubuntu-slim
+    needs:
+      - test
+    steps:
+      - uses: actions/checkout@v6
+      - uses: astral-sh/setup-uv@v7
+        with:
+          python-version: 3.14
+      - if: ${{ startsWith(github.ref, 'refs/tags/v') }}
+        run: uv version ${{ github.ref_name }}
+      - run: uv build
+      - uses: actions/upload-artifact@v6
+        with:
+          if-no-files-found: error
+          path: dist/
+          name: package
+
+  deploy-pypi:
+    if: ${{ startsWith(github.ref, 'refs/tags/v') }}
+    needs:
+      - build
+    runs-on: ubuntu-slim
+    environment:
+      name: pypi
+      url: https://pypi.org/project/pydantic-json-patch/
+    permissions:
+      id-token: write
+    steps:
+      - uses: actions/download-artifact@v7
+        with:
+          name: package
+          path: dist/
+      - uses: pypa/gh-action-pypi-publish@v1
+
+  deploy-gh-release:
+    if: ${{ startsWith(github.ref, 'refs/tags/v') }}
+    needs:
+      - build
+    runs-on: ubuntu-slim
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@v7
+        with:
+          name: package
+          path: dist/
+      - run: gh release upload ${{ github.ref_name }} dist/*
+
+  smoke-test:
+    if: ${{ startsWith(github.ref, 'refs/tags/v') }}
+    needs:
+      - deploy-pypi
+    runs-on: ubuntu-slim
+    steps:
+      - uses: actions/setup-python@v6
+        with:
+          python-version: 3.10
+      - run: |
+          pip install "pydantic-json-patch==${VERSION#v}"
+          python3 -c 'from pydantic_json_patch import __version__;print(__version__)'
+        env:
+          VERSION: ${{ github.ref_name }}
