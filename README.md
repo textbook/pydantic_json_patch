@@ -23,7 +23,7 @@ A model is provided for each of the six JSON Patch operations:
 
 As repeating the op is a bit awkward (`CopyOp(op="copy", ...)`), a `create` factory method is available:
 
-```pycon
+```python
 >>> from pydantic_json_patch import AddOp
 >>> op = AddOp.create(path="/foo/bar", value=123)
 >>> op
@@ -43,7 +43,7 @@ The `path` property (and `from` property, where present) of an operation is a [J
 This means that any `~` or `/` characters in property names need to be properly encoded.
 To aid working with these, the models expose a read-only `path_tokens` property (and, where appropriate, `from_tokens`):
 
-```pycon
+```python
 >>> from pydantic_json_patch import CopyOp
 >>> op = CopyOp.model_validate_json('{"op":"copy","path":"/foo/bar~1new","from":"/foo/bar~0old"}')
 >>> op
@@ -56,7 +56,7 @@ CopyOp(op='copy', path='/foo/bar~1new', from_='/foo/bar~0old')
 
 Similarly, the `create` factory methods can accept tuples of tokens, and will encode them appropriately:
 
-```pycon
+```python
 >>> from pydantic_json_patch import TestOp
 >>> op = TestOp.create(path=("annotations", "scope/value"), value=None)
 >>> op
