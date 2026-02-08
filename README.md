@@ -59,10 +59,11 @@ TestOp(op='test', path='/annotations/scope~1value', value=None)
 
 ## FastAPI
 
-You can use this package to validate a JSON Patch endpoint in a FastAPI application:
+You can use this package to validate a JSON Patch endpoint in a FastAPI application, for example:
 
 ```python
 import typing as tp
+from uuid import UUID
 
 from fastapi import Body, FastAPI
 
@@ -71,12 +72,22 @@ from pydantic_json_patch import JsonPatch
 app = FastAPI()
 
 
-@app.patch("/resource/:id")
-def _(operations: tp.Annotated[JsonPatch, Body()]) -> "...":
+@app.patch("/resource/{resource_id}")
+def _(resource_id: UUID, operations: tp.Annotated[JsonPatch, Body()]) -> ...:
     ...
 ```
+
+This will provide a sensible example of the request body:
+
+[![Screenshot of Swagger UI request body example][swagger-example]][swagger-example]
+
+and list the models along with the other schemas:
+
+[![Screenshot of Swagger UI schema list][swagger-schemas]][swagger-schemas]
 
   [fastapi]: https://fastapi.tiangolo.com/
   [json patch]: https://datatracker.ietf.org/doc/html/rfc6902/
   [json pointer]: https://datatracker.ietf.org/doc/html/rfc6901/
   [pydantic]: https://docs.pydantic.dev/latest/
+  [swagger-example]: docs/swagger-example.png
+  [swagger-schemas]: docs/swagger-schemas.png

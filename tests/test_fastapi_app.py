@@ -1,5 +1,6 @@
 import typing as tp
 from http import HTTPStatus
+from uuid import uuid4
 
 import pytest
 from fastapi.testclient import TestClient
@@ -8,7 +9,7 @@ from .app import app
 
 
 def test_empty_list_accepted(test_client: TestClient):
-    res = test_client.patch("/test", json=[])
+    res = test_client.patch(f"/resource/{uuid4()}", json=[])
     assert res.status_code == HTTPStatus.OK
     assert res.json() == []
 
@@ -22,25 +23,47 @@ def test_valid_operations_accepted(test_client: TestClient):
         {"op": "move", "from": "/a/b/c", "path": "/a/b/d"},
         {"op": "copy", "from": "/a/b/d", "path": "/a/b/e"},
     ]
-    res = test_client.patch("/test", json=example)
+    res = test_client.patch(f"/resource/{uuid4()}", json=example)
     assert res.status_code == HTTPStatus.OK
     assert res.json() == example
 
 
 @pytest.mark.parametrize(
-    "body",
+    "body, message",
     [
-        pytest.param({}, id="not an array"),
-        pytest.param([{"foo": "bar"}], id="not an operation"),
-        pytest.param([{"op": "bar"}], id="not a known operation"),
+        pytest.param({}, "Input should be a valid list", id="not an array"),
         pytest.param(
-            [{"op": "copy", "path": "/foo/bar", "value": 123}], id="invalid operation"
+            [{"foo": "bar"}],
+            "Unable to extract tag using discriminator 'op'",
+            id="not an operation",
+        ),
+        pytest.param(
+            [{"op": "bar"}],
+            "Input tag 'bar' found using 'op' does not match any of the expected tags: "
+            "'add', 'copy', 'move', 'remove', 'replace', 'test'",
+            id="not a known operation",
+        ),
+        pytest.param(
+            [{"op": "copy", "path": "/foo/bar", "value": 123}],
+            "Field required",
+            id="invalid operation",
+        ),
+        pytest.param(
+            [{"op": "test", "path": "not-a-path", "value": None}],
+            "String should match pattern '^(?:/(?:[^/~]|~[01])+)*$'",
+            id="invalid path",
+        ),
+        pytest.param(
+            [{"from": 123, "op": "copy", "path": "/a/path"}],
+            "Input should be a valid string",
+            id="invalid from",
         ),
     ],
 )
-def test_invalid_patch_rejected(test_client: TestClient, body: tp.Any):
-    res = test_client.patch("/test", json=body)
+def test_invalid_patch_rejected(test_client: TestClient, body: tp.Any, message: str):
+    res = test_client.patch(f"/resource/{uuid4()}", json=body)
     assert res.status_code == HTTPStatus.UNPROCESSABLE_ENTITY
+    assert message in [detail["msg"] for detail in res.json()["detail"]]
 
 
 def test_sensible_property_examples(test_client: TestClient):
