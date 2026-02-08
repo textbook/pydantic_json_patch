@@ -2,6 +2,7 @@
 
 [![Python uv CI][ci-badge]][ci-page]
 [![Coverage Status][coverage-badge]][coverage-page]
+[![PyPI - Version][pypi-badge]][pypi-page]
 
 [Pydantic] models for implementing [JSON Patch].
 
@@ -105,5 +106,7 @@ and list the models along with the other schemas:
   [json pointer]: https://datatracker.ietf.org/doc/html/rfc6901/
   [pydantic]: https://docs.pydantic.dev/latest/
   [pypi]: https://pypi.org/
+  [pypi-badge]: https://img.shields.io/pypi/v/pydantic-json-patch?logo=python&logoColor=white&label=PyPI
+  [pypi-page]: https://pypi.org/project/pydantic-json-patch/
   [swagger-example]: https://github.com/textbook/pydantic_json_patch/blob/main/docs/swagger-example.png?raw=true
   [swagger-schemas]: https://github.com/textbook/pydantic_json_patch/blob/main/docs/swagger-schemas.png?raw=true
