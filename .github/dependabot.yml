@@ -12,7 +12,7 @@ updates:
     groups:
       uv-minor-patch:
         patterns:
-          - *
+          - '*'
         update-types:
           - minor
           - patch
