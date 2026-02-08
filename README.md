@@ -98,5 +98,5 @@ and list the models along with the other schemas:
   [json pointer]: https://datatracker.ietf.org/doc/html/rfc6901/
   [pydantic]: https://docs.pydantic.dev/latest/
   [pypi]: https://pypi.org/
-  [swagger-example]: docs/swagger-example.png
-  [swagger-schemas]: docs/swagger-schemas.png
+  [swagger-example]: https://github.com/textbook/pydantic_json_patch/blob/main/docs/swagger-example.png?raw=true
+  [swagger-schemas]: https://github.com/textbook/pydantic_json_patch/blob/main/docs/swagger-schemas.png?raw=true
