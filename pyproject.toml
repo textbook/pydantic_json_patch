@@ -55,5 +55,8 @@ dev = [
 [tool.coverage.run]
 omit = ["tests/**"]
 
+[tool.coverage.lcov]
+output = "coverage/lcov.info"
+
 [tool.pytest.ini_options]
 python_classes = []  # avoid trying to run TestOp as a test
