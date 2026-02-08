@@ -29,6 +29,7 @@ jobs:
           python-version: ${{ matrix.python }}
       - run: uv sync --dev --locked
       - run: uv run ty check
+      - run: uv run isort --check .
       - run: uv run ruff check
       - run: uv run ruff format --check
       - run: uv run coverage run --module pytest
