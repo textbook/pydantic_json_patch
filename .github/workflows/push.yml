@@ -55,7 +55,7 @@ jobs:
     if: ${{ startsWith(github.ref, 'refs/tags/v') }}
     needs:
       - build
-    runs-on: ubuntu-slim
+    runs-on: ubuntu-latest
     environment:
       name: pypi
       url: https://pypi.org/project/pydantic-json-patch/
