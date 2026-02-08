@@ -33,7 +33,7 @@ Issues = "https://github.com/textbook/pydantic_json_patch/issues"
 Sponsor = "https://ko-fi.com/textbook"
 
 [build-system]
-requires = ["uv_build>=0.9.27,<0.10.0"]
+requires = ["uv_build>=0.9.27,<0.11.0"]
 build-backend = "uv_build"
 
 [dependency-groups]
