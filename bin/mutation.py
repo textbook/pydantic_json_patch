@@ -31,20 +31,23 @@ from cosmic_ray.tools.survival_rate import kills_count, survival_rate
 from cosmic_ray.work_db import WorkDB, use_db
 from cosmic_ray.work_item import TestOutcome, WorkItem
 
-REPO = (pathlib.Path(__file__).parent / "..").resolve()
+ROOT = (pathlib.Path(__file__).parent / "..").resolve()
+MUTATION = ROOT / "mutation"
 
-config_dict = load_config(REPO / "cosmic-ray.toml")
+MUTATION.mkdir(exist_ok=True)
+
+config_dict = load_config(ROOT / "cosmic-ray.toml")
 logger = logging.getLogger(__name__)
 logger.addHandler(logging.StreamHandler())
 modules = [
-    REPO / config_dict["module-path"] / module
-    for module in glob.glob("*.py", root_dir=REPO / config_dict["module-path"])
+    ROOT / config_dict["module-path"] / module
+    for module in glob.glob("*.py", root_dir=ROOT / config_dict["module-path"])
 ]
 
 
 def baseline(config: ConfigDict, /):
     """Ensure the tests can pass via Cosmic Ray before mutating."""
-    with use_db(REPO / "mutation" / "baseline.sqlite", mode=WorkDB.Mode.create) as db:
+    with use_db(MUTATION / "baseline.sqlite", mode=WorkDB.Mode.create) as db:
         db.clear()
         db.add_work_item(
             WorkItem(
@@ -59,7 +62,7 @@ def baseline(config: ConfigDict, /):
 
 baseline(config_dict)
 
-with use_db(REPO / "mutation" / "state.sqlite", mode=WorkDB.Mode.create) as work_db:
+with use_db(MUTATION / "state.sqlite", mode=WorkDB.Mode.create) as work_db:
     commands.init(
         module_paths=modules,
         operator_cfgs=config_dict.operators_config,
@@ -90,7 +93,7 @@ with use_db(REPO / "mutation" / "state.sqlite", mode=WorkDB.Mode.create) as work
         file=sys.stderr,
     )
 
-    report_path = REPO / "mutation" / "index.html"
+    report_path = MUTATION / "index.html"
     with open(report_path, mode="w") as report:
         doc: yattag.Doc = _generate_html_report(
             work_db, only_completed=False, skip_success=False
