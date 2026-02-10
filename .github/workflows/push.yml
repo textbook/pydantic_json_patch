@@ -40,6 +40,22 @@ jobs:
         with:
           file: coverage/lcov.info
 
+  mutation:
+    runs-on: ubuntu-slim
+    needs:
+      - test
+    steps:
+      - uses: actions/checkout@v6
+      - uses: astral-sh/setup-uv@v7
+        with:
+          python-version: '3.14'
+      - run: uv run python ./bin/mutation.py
+      - uses: actions/upload-artifact@v6
+        with:
+          if-no-files-found: error
+          path: mutation/index.html
+          name: mutation-report
+
   build:
     runs-on: ubuntu-slim
     needs:
