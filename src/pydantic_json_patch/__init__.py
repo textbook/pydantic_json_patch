@@ -3,7 +3,7 @@ from importlib.metadata import version
 
 from pydantic import Discriminator
 
-from .models import AddOp, CopyOp, MoveOp, Op, RemoveOp, ReplaceOp, TestOp, Tokens
+from .models import AddOp, CopyOp, MoveOp, RemoveOp, ReplaceOp, TestOp
 
 __version__ = version(__name__)
 
@@ -18,10 +18,8 @@ __all__ = [
     "CopyOp",
     "JsonPatch",
     "MoveOp",
-    "Op",
     "Operation",
     "RemoveOp",
     "ReplaceOp",
     "TestOp",
-    "Tokens",
 ]

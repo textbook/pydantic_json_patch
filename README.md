@@ -58,7 +58,7 @@ CopyOp(op='copy', path='/foo/bar~1new', from_='/foo/bar~0old')
 ('foo', 'bar~old')
 ```
 
-Similarly, the `create` factory methods can accept tuples of tokens, and will encode them appropriately:
+Similarly, the `create` factory methods can accept sequences of tokens, and will encode them appropriately:
 
 ```python
 >>> from pydantic_json_patch import TestOp
