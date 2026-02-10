@@ -1,8 +1,8 @@
 [cosmic-ray]
 module-path = "src/pydantic_json_patch"
-timeout = 5.0
+timeout = 1.0
 excluded-modules = []
-test-command = "uv run pytest"
+test-command = "uv run pytest --exitfirst"
 
 [cosmic-ray.distributor]
 name = "local"
