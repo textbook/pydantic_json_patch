@@ -41,7 +41,7 @@ jobs:
           file: coverage/lcov.info
 
   mutation:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-slim
     needs:
       - test
     steps:

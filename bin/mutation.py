@@ -17,7 +17,6 @@ import glob
 import logging
 import pathlib
 import sys
-import tempfile
 
 import tqdm
 import yattag
@@ -42,20 +41,17 @@ modules = [
 
 def baseline(config: ConfigDict, /):
     """Ensure the tests can pass via Cosmic Ray before mutating."""
-    with tempfile.TemporaryDirectory() as tmp_dir:
-        with use_db(
-            pathlib.Path(tmp_dir) / "state.sqlite", mode=WorkDB.Mode.create
-        ) as db:
-            db.clear()
-            db.add_work_item(
-                WorkItem(
-                    mutations=[],  # type: ignore[invalid-argument-type] -- library definition is wrong
-                    job_id="baseline",
-                )
+    with use_db(REPO / "mutation" / "baseline.sqlite", mode=WorkDB.Mode.create) as db:
+        db.clear()
+        db.add_work_item(
+            WorkItem(
+                mutations=[],  # type: ignore[invalid-argument-type] -- library definition is wrong
+                job_id="baseline",
             )
-            commands.execute(db, config=config)
-            if next(db.results)[1] == TestOutcome.KILLED:
-                raise RuntimeError("test baseline failed")
+        )
+        commands.execute(db, config=config)
+        if next(db.results)[1] == TestOutcome.KILLED:
+            raise RuntimeError("test baseline failed")
 
 
 baseline(config_dict)
