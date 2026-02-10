@@ -1,6 +1,6 @@
 [cosmic-ray]
 module-path = "src/pydantic_json_patch"
-timeout = 1.0
+timeout = 5.0
 excluded-modules = []
 test-command = "uv run pytest --exitfirst"
 
