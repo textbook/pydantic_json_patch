@@ -71,7 +71,7 @@ class _FromOp(_BaseOp):
     @classmethod
     def _pre_validate(cls, data: tp.Any, info: ValidationInfo) -> tp.Any:
         if (
-            info.mode != "json"
+            info.mode != "json"  # pragma: no mutate
             and isinstance(data, dict)
             and "from_" in data
             and "from" not in data

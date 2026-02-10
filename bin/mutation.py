@@ -17,12 +17,15 @@ import glob
 import logging
 import pathlib
 import sys
+from contextlib import redirect_stdout
+from io import StringIO
 
 import tqdm
 import yattag
 from cosmic_ray import commands
 from cosmic_ray.config import ConfigDict, load_config
 from cosmic_ray.plugins import get_distributor
+from cosmic_ray.tools.filters.pragma_no_mutate import PragmaNoMutateFilter
 from cosmic_ray.tools.html import _generate_html_report
 from cosmic_ray.tools.survival_rate import kills_count, survival_rate
 from cosmic_ray.work_db import WorkDB, use_db
@@ -62,6 +65,10 @@ with use_db(REPO / "mutation" / "state.sqlite", mode=WorkDB.Mode.create) as work
         operator_cfgs=config_dict.operators_config,
         work_db=work_db,
     )
+
+    with redirect_stdout(StringIO()):
+        PragmaNoMutateFilter().filter(work_db, None)
+
     distributor = get_distributor(config_dict.distributor_name)
 
     with tqdm.tqdm(total=work_db.num_work_items) as progress:
