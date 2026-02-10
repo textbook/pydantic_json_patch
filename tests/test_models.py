@@ -1,5 +1,6 @@
 import json
 import typing as tp
+from collections.abc import Sequence
 
 import pytest
 from pydantic import ValidationError
@@ -48,6 +49,11 @@ def test_move_op_can_be_parsed():
     )
 
 
+def test_create_move_op_requires_kwargs():
+    with pytest.raises(TypeError):
+        MoveOp.create("/foo/bar", from_=["baz", "qux"])  # type: ignore[too-many-positional-arguments] -- for testing purposes
+
+
 def test_remove_op_can_be_parsed():
     op: tp.Literal["remove"] = "remove"
     path = "/foo/bar"
@@ -61,13 +67,18 @@ def test_remove_op_can_be_parsed():
         pytest.param("/foo/bar", "/foo/bar", id="string path"),
         pytest.param(("foo", "bar"), "/foo/bar", id="simple path"),
         pytest.param((), "", id="empty"),
-        pytest.param(("foo~bar", "baz"), "/foo~0bar/baz", id="includes tilde"),
+        pytest.param(["foo~bar", "baz"], "/foo~0bar/baz", id="includes tilde"),
         pytest.param(("foo/bar", "baz"), "/foo~1bar/baz", id="includes slash"),
     ],
 )
-def test_remove_op_can_be_created(tokens: str | tuple[str, ...], path: str):
+def test_remove_op_can_be_created(tokens: Sequence[str], path: str):
     op: RemoveOp = RemoveOp.create(path=tokens)
     assert op == RemoveOp(op="remove", path=path)
+
+
+def test_create_remove_op_requires_kwargs():
+    with pytest.raises(TypeError):
+        RemoveOp.create(["foo", "bar", "baz"])  # type: ignore[too-many-positional-arguments] -- for testing purposes
 
 
 def test_replace_op_can_be_parsed():
@@ -78,6 +89,11 @@ def test_replace_op_can_be_parsed():
     assert ReplaceOp.model_validate_json(json_) == ReplaceOp(
         op=op, path=path, value=value
     )
+
+
+def test_create_replace_op_requires_kwargs():
+    with pytest.raises(TypeError):
+        ReplaceOp.create("/foo/bar", value=["baz", "qux"])  # type: ignore[too-many-positional-arguments] -- for testing purposes
 
 
 def test_test_op_can_be_parsed():
@@ -146,3 +162,9 @@ def test_path_tokens_exposed(path: str, tokens: tuple[str, ...]):
     op = CopyOp(from_=path, op="copy", path=path)  # type: ignore[missing-argument,unknown-argument] -- ty can't follow the alias
     assert op.from_tokens == tokens
     assert op.path_tokens == tokens
+
+
+def test_models_are_immutable():
+    op = RemoveOp.create(path=["foo", "bar"])
+    with pytest.raises(ValidationError, match="Instance is frozen"):
+        op.op = "copy"  # type: ignore[invalid-assignment] -- for testing purposes
