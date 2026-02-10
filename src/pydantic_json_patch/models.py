@@ -1,7 +1,7 @@
 import re
 import typing as tp
 from collections.abc import Sequence
-from functools import cached_property
+from functools import cached_property, lru_cache
 
 import typing_extensions as tx
 from pydantic import BaseModel, ConfigDict, Field, ValidationInfo, model_validator
@@ -21,8 +21,7 @@ class _BaseOp(BaseModel):
     @classmethod
     def create(cls, *, path: str | Sequence[str], **kwargs) -> tx.Self:
         (op,) = tp.get_args(cls.model_fields["op"].annotation)
-        pointer = path if isinstance(path, str) else cls._dump_pointer(path)
-        return cls(op=op, path=pointer, **kwargs)
+        return cls(op=op, path=cls._dump_pointer(path), **kwargs)
 
     op: tp.Literal["add", "copy", "move", "remove", "replace", "test"]
     """The operation being represented."""
@@ -35,18 +34,26 @@ class _BaseOp(BaseModel):
         """The decoded tokens in the 'path' JSON pointer."""
         return self._load_pointer(self.path)
 
-    @staticmethod
-    def _dump_pointer(pointer: Sequence[str]) -> str:
-        return "/".join(
-            ["", *(token.replace("~", "~0").replace("/", "~1") for token in pointer)]
-        )
+    @classmethod
+    def _dump_pointer(cls, pointer: Sequence[str]) -> str:
+        if isinstance(pointer, str):
+            return pointer
+        return "/".join(["", *(cls._encode_token(token) for token in pointer)])
 
     @staticmethod
-    def _load_pointer(pointer: str) -> tuple[str, ...]:
-        return tuple(
-            token.replace("~1", "/").replace("~0", "~")
-            for token in pointer.split("/")[1:]
-        )
+    @lru_cache
+    def _decode_token(token: str) -> str:
+        return token.replace("~1", "/").replace("~0", "~")
+
+    @staticmethod
+    @lru_cache
+    def _encode_token(token: str) -> str:
+        return token.replace("~", "~0").replace("/", "~1")
+
+    @classmethod
+    @lru_cache
+    def _load_pointer(cls, pointer: str) -> tuple[str, ...]:
+        return tuple(cls._decode_token(token) for token in pointer.split("/")[1:])
 
 
 class _FromOp(_BaseOp):
