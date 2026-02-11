@@ -30,13 +30,13 @@ def test_copy_op_can_be_parsed():
     from_ = "/baz/qux"
     json_ = json.dumps({"from": from_, "op": op, "path": path})
     assert (
-        CopyOp.model_validate_json(json_) == CopyOp(from_=from_, op=op, path=path)  # type: ignore[missing-argument,unknown-argument] -- ty can't follow the alias
+        CopyOp.model_validate_json(json_) == CopyOp(from_=from_, op=op, path=path)  # ty: ignore[missing-argument,unknown-argument] -- ty can't follow the alias
     )
 
 
 def test_copy_op_can_be_created():
     path = "/foo/bar"
-    assert CopyOp.create(path=path, from_=()) == CopyOp(from_="", op="copy", path=path)  # type: ignore[missing-argument,unknown-argument] -- ty can't follow the alias
+    assert CopyOp.create(path=path, from_=()) == CopyOp(from_="", op="copy", path=path)  # ty: ignore[missing-argument,unknown-argument] -- ty can't follow the alias
 
 
 def test_move_op_can_be_parsed():
@@ -45,13 +45,13 @@ def test_move_op_can_be_parsed():
     from_ = "/baz/qux"
     json_ = json.dumps({"from": from_, "op": op, "path": path})
     assert (
-        MoveOp.model_validate_json(json_) == MoveOp(from_=from_, op=op, path=path)  # type: ignore[missing-argument,unknown-argument] -- ty can't follow the alias
+        MoveOp.model_validate_json(json_) == MoveOp(from_=from_, op=op, path=path)  # ty: ignore[missing-argument,unknown-argument] -- ty can't follow the alias
     )
 
 
 def test_create_move_op_requires_kwargs():
     with pytest.raises(TypeError):
-        MoveOp.create("/foo/bar", from_=["baz", "qux"])  # type: ignore[too-many-positional-arguments] -- for testing purposes
+        MoveOp.create("/foo/bar", from_=["baz", "qux"])  # type: ignore -- for testing purposes
 
 
 def test_remove_op_can_be_parsed():
@@ -78,7 +78,7 @@ def test_remove_op_can_be_created(tokens: Sequence[str], path: str):
 
 def test_create_remove_op_requires_kwargs():
     with pytest.raises(TypeError):
-        RemoveOp.create(["foo", "bar", "baz"])  # type: ignore[too-many-positional-arguments] -- for testing purposes
+        RemoveOp.create(["foo", "bar", "baz"])  # type: ignore -- for testing purposes
 
 
 def test_replace_op_can_be_parsed():
@@ -93,7 +93,7 @@ def test_replace_op_can_be_parsed():
 
 def test_create_replace_op_requires_kwargs():
     with pytest.raises(TypeError):
-        ReplaceOp.create("/foo/bar", value=["baz", "qux"])  # type: ignore[too-many-positional-arguments] -- for testing purposes
+        ReplaceOp.create("/foo/bar", value=["baz", "qux"])  # type: ignore -- for testing purposes
 
 
 def test_test_op_can_be_parsed():
@@ -159,7 +159,7 @@ def test_additional_members_are_ignored():
     ],
 )
 def test_path_tokens_exposed(path: str, tokens: tuple[str, ...]):
-    op = CopyOp(from_=path, op="copy", path=path)  # type: ignore[missing-argument,unknown-argument] -- ty can't follow the alias
+    op = CopyOp(from_=path, op="copy", path=path)  # ty: ignore[missing-argument,unknown-argument] -- ty can't follow the alias
     assert op.from_tokens == tokens
     assert op.path_tokens == tokens
 
@@ -167,4 +167,4 @@ def test_path_tokens_exposed(path: str, tokens: tuple[str, ...]):
 def test_models_are_immutable():
     op = RemoveOp.create(path=["foo", "bar"])
     with pytest.raises(ValidationError, match="Instance is frozen"):
-        op.op = "copy"  # type: ignore[invalid-assignment] -- for testing purposes
+        op.op = "copy"  # ty: ignore[invalid-assignment] -- for testing purposes
