@@ -123,6 +123,12 @@ Additionally, there is [ty] type-checking that can be run with:
 uv run ty check
 ```
 
+and [Cosmic Ray] mutation testing that can be run with:
+
+```shell
+uv run python ./bin/mutation.py
+```
+
 ### FastAPI
 
 You can preview the FastAPI/Swagger documentation by running:
@@ -134,6 +140,7 @@ uv run fastapi dev tests/app.py
 and visiting the Documentation link that's logged in the console.
 This will auto-restart as you make changes.
 
+  [cosmic ray]: https://cosmic-ray.readthedocs.io/en/latest/index.html
   [ci-badge]: https://github.com/textbook/pydantic_json_patch/actions/workflows/push.yml/badge.svg
   [ci-page]: https://github.com/textbook/pydantic_json_patch/actions/workflows/push.yml
   [coverage-badge]: https://coveralls.io/repos/github/textbook/pydantic_json_patch/badge.svg?branch=main
