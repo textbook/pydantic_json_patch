@@ -29,13 +29,13 @@ def test_copy_op_can_be_parsed():
     from_ = "/baz/qux"
     json_ = json.dumps({"from": from_, "op": op, "path": path})
     assert (
-        CopyOp.model_validate_json(json_) == CopyOp(from_=from_, op=op, path=path)  # type: ignore[missing-argument,unknown-argument] -- ty can't follow the alias
+        CopyOp.model_validate_json(json_) == CopyOp(from_=from_, op=op, path=path)  # ty: ignore[missing-argument,unknown-argument] -- ty can't follow the alias
     )
 
 
 def test_copy_op_can_be_created():
     path = "/foo/bar"
-    assert CopyOp.create(path=path, from_=()) == CopyOp(from_="", op="copy", path=path)  # type: ignore[missing-argument,unknown-argument] -- ty can't follow the alias
+    assert CopyOp.create(path=path, from_=()) == CopyOp(from_="", op="copy", path=path)  # ty: ignore[missing-argument,unknown-argument] -- ty can't follow the alias
 
 
 def test_move_op_can_be_parsed():
@@ -44,7 +44,7 @@ def test_move_op_can_be_parsed():
     from_ = "/baz/qux"
     json_ = json.dumps({"from": from_, "op": op, "path": path})
     assert (
-        MoveOp.model_validate_json(json_) == MoveOp(from_=from_, op=op, path=path)  # type: ignore[missing-argument,unknown-argument] -- ty can't follow the alias
+        MoveOp.model_validate_json(json_) == MoveOp(from_=from_, op=op, path=path)  # ty: ignore[missing-argument,unknown-argument] -- ty can't follow the alias
     )
 
 
@@ -143,6 +143,6 @@ def test_additional_members_are_ignored():
     ],
 )
 def test_path_tokens_exposed(path: str, tokens: tuple[str, ...]):
-    op = CopyOp(from_=path, op="copy", path=path)  # type: ignore[missing-argument,unknown-argument] -- ty can't follow the alias
+    op = CopyOp(from_=path, op="copy", path=path)  # ty: ignore[missing-argument,unknown-argument] -- ty can't follow the alias
     assert op.from_tokens == tokens
     assert op.path_tokens == tokens
