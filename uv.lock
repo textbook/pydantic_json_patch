@@ -579,8 +579,8 @@ dev = [
 
 [package.metadata]
 requires-dist = [
-    { name = "pydantic", specifier = ">=2.0" },
-    { name = "typing-extensions", specifier = ">=4.15.0" },
+    { name = "pydantic", specifier = ">=2.12" },
+    { name = "typing-extensions", specifier = ">=4.14.1" },
 ]
 
 [package.metadata.requires-dev]

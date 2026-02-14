@@ -8,8 +8,8 @@ authors = [
 ]
 requires-python = ">=3.10"
 dependencies = [
-    "pydantic>=2.0",
-    "typing-extensions>=4.15.0",
+    "pydantic>=2.12",
+    "typing-extensions>=4.14.1",
 ]
 license = "ISC"
 classifiers = [
