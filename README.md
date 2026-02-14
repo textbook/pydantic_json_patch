@@ -36,6 +36,15 @@ AddOp(op='add', path='/foo/bar', value=123)
 '{"op":"add","path":"/foo/bar","value":123}'
 ```
 
+The operations that take a value (`AddOp`, `ReplaceOp`, and `TestOp`) are generic, so you can parameterize them with a specific value type:
+
+```python
+>>> from pydantic_json_patch import ReplaceOp
+>>> op = ReplaceOp[str].create(path="/foo/bar", value="hello")
+>>> op
+ReplaceOp[str](op='replace', path='/foo/bar', value='hello')
+```
+
 Additionally, there are two compound models:
 
 - `Operation` is the union of all the operators; and

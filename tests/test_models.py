@@ -18,7 +18,7 @@ def test_add_op_can_be_parsed():
 def test_add_op_can_be_created():
     path = "/foo/bar"
     value = 123
-    assert AddOp.create(path=path, value=value) == AddOp(
+    assert AddOp[int].create(path=path, value=value) == AddOp(
         op="add", path=path, value=value
     )
 

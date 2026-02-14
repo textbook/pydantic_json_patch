@@ -8,6 +8,7 @@ from pydantic import BaseModel, ConfigDict, Field, ValidationInfo, model_validat
 
 _JSON_POINTER = re.compile(r"^(?:/(?:[^/~]|~[01])+)*$")
 
+T = tx.TypeVar("T", default=tp.Any)
 
 # region base models
 
@@ -85,12 +86,12 @@ class _FromOp(_BaseOp):
         return self._load_pointer(self.from_)
 
 
-class _ValueOp(_BaseOp):
+class _ValueOp(_BaseOp, tp.Generic[T]):
     @classmethod
-    def create(cls, *, path: str | Sequence[str], value: tp.Any) -> tx.Self:  # ty: ignore[invalid-method-override] -- deliberately narrows **kwargs to named params
+    def create(cls, *, path: str | Sequence[str], value: T) -> tx.Self:  # ty: ignore[invalid-method-override] -- deliberately narrows **kwargs to named params
         return super().create(path=path, value=value)
 
-    value: tp.Any = Field(examples=[42])
+    value: T = Field(examples=[42])
     """The value to use in the operation."""
 
 
@@ -99,7 +100,7 @@ class _ValueOp(_BaseOp):
 # region public models
 
 
-class AddOp(_ValueOp):
+class AddOp(_ValueOp[T], tp.Generic[T]):
     op: tp.Literal["add"]
 
 
@@ -119,11 +120,11 @@ class RemoveOp(_BaseOp):
     op: tp.Literal["remove"]
 
 
-class ReplaceOp(_ValueOp):
+class ReplaceOp(_ValueOp[T], tp.Generic[T]):
     op: tp.Literal["replace"]
 
 
-class TestOp(_ValueOp):
+class TestOp(_ValueOp[T], tp.Generic[T]):
     op: tp.Literal["test"]
 
 
