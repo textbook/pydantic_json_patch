@@ -60,7 +60,7 @@ class _FromOp(_BaseOp):
     @classmethod
     def create(
         cls, *, path: str | Sequence[str], from_: str | Sequence[str]
-    ) -> tx.Self:  # ty: ignore[invalid-method-override]
+    ) -> tx.Self:  # ty: ignore[invalid-method-override] -- deliberately narrows **kwargs to named params
         pointer = from_ if isinstance(from_, str) else cls._dump_pointer(from_)
         return super().create(path=path, **{"from": pointer})
 
@@ -87,7 +87,7 @@ class _FromOp(_BaseOp):
 
 class _ValueOp(_BaseOp):
     @classmethod
-    def create(cls, *, path: str | Sequence[str], value: tp.Any) -> tx.Self:  # ty: ignore[invalid-method-override]
+    def create(cls, *, path: str | Sequence[str], value: tp.Any) -> tx.Self:  # ty: ignore[invalid-method-override] -- deliberately narrows **kwargs to named params
         return super().create(path=path, value=value)
 
     value: tp.Any = Field(examples=[42])
@@ -113,7 +113,7 @@ class MoveOp(_FromOp):
 
 class RemoveOp(_BaseOp):
     @classmethod
-    def create(cls, *, path: str | Sequence[str]) -> tx.Self:  # ty: ignore[invalid-method-override]
+    def create(cls, *, path: str | Sequence[str]) -> tx.Self:  # ty: ignore[invalid-method-override] -- deliberately narrows **kwargs to named params
         return super().create(path=path)
 
     op: tp.Literal["remove"]
