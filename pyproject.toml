@@ -64,4 +64,5 @@ output = "coverage/lcov.info"
 profile = "black"
 
 [tool.pytest.ini_options]
+addopts = "--doctest-glob=*.md"  # validate README examples
 python_classes = []  # avoid trying to run TestOp as a test

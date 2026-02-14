@@ -34,6 +34,7 @@ As repeating the op is a bit awkward (`CopyOp(op="copy", ...)`), a `create` fact
 AddOp(op='add', path='/foo/bar', value=123)
 >>> op.model_dump_json()
 '{"op":"add","path":"/foo/bar","value":123}'
+
 ```
 
 The operations that take a value (`AddOp`, `ReplaceOp`, and `TestOp`) are generic, so you can parameterize them with a specific value type:
@@ -43,6 +44,7 @@ The operations that take a value (`AddOp`, `ReplaceOp`, and `TestOp`) are generi
 >>> op = ReplaceOp[str].create(path="/foo/bar", value="hello")
 >>> op
 ReplaceOp[str](op='replace', path='/foo/bar', value='hello')
+
 ```
 
 Additionally, there are two compound models:
@@ -65,6 +67,7 @@ CopyOp(op='copy', path='/foo/bar~1new', from_='/foo/bar~0old')
 ('foo', 'bar/new')
 >>> op.from_tokens
 ('foo', 'bar~old')
+
 ```
 
 Similarly, the `create` factory methods can accept sequences of tokens, and will encode them appropriately:
@@ -76,6 +79,7 @@ Similarly, the `create` factory methods can accept sequences of tokens, and will
 TestOp(op='test', path='/annotations/scope~1value', value=None)
 >>> op.model_dump_json()
 '{"op":"test","path":"/annotations/scope~1value","value":null}'
+
 ```
 
 ## FastAPI
