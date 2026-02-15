@@ -1269,6 +1269,11 @@ dev = [
     { name = "tqdm" },
     { name = "ty" },
 ]
+mutation = [
+    { name = "cosmic-ray" },
+    { name = "pytest-ty" },
+    { name = "tqdm" },
+]
 
 [package.metadata]
 requires-dist = [
@@ -1290,6 +1295,11 @@ dev = [
     { name = "ruff", specifier = ">=0.15.0" },
     { name = "tqdm", specifier = ">=4.67.3" },
     { name = "ty", specifier = ">=0.0.15" },
+]
+mutation = [
+    { name = "cosmic-ray", specifier = ">=8.4.3" },
+    { name = "pytest-ty", specifier = ">=0.1.4" },
+    { name = "tqdm", specifier = ">=4.67.3" },
 ]
 
 [[package]]
