@@ -47,10 +47,20 @@ ReplaceOp[str](op='replace', path='/foo/bar', value='hello')
 
 ```
 
-Additionally, there are two compound models:
+Additionally, there are two compound types:
 
 - `Operation` is the union of all the operators; and
-- `JsonPatch` represents a list of that union type.
+- `JsonPatch` is a Pydantic `RootModel` representing a sequence of operations.
+
+`JsonPatch` can be used directly for validation:
+
+```python
+>>> from pydantic_json_patch import JsonPatch
+>>> patch = JsonPatch.model_validate_json('[{"op":"add","path":"/a/b/c","value":"foo"}]')
+>>> patch[0]
+AddOp(op='add', path='/a/b/c', value='foo')
+
+```
 
 ### Pointer tokens
 

@@ -31,7 +31,7 @@ def test_valid_operations_accepted(test_client: TestClient):
 @pytest.mark.parametrize(
     "body, message",
     [
-        pytest.param({}, "Input should be a valid list", id="not an array"),
+        pytest.param({}, "Input should be an instance of Sequence", id="not an array"),
         pytest.param(
             [{"foo": "bar"}],
             "Unable to extract tag using discriminator 'op'",

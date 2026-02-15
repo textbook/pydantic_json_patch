@@ -4,7 +4,15 @@ import typing as tp
 import pytest
 from pydantic import ValidationError
 
-from pydantic_json_patch import AddOp, CopyOp, MoveOp, RemoveOp, ReplaceOp, TestOp
+from pydantic_json_patch import (
+    AddOp,
+    CopyOp,
+    JsonPatch,
+    MoveOp,
+    RemoveOp,
+    ReplaceOp,
+    TestOp,
+)
 
 
 def test_add_op_can_be_parsed():
@@ -146,3 +154,83 @@ def test_path_tokens_exposed(path: str, tokens: tuple[str, ...]):
     op = CopyOp(from_=path, op="copy", path=path)  # ty: ignore[missing-argument,unknown-argument] -- ty can't follow the alias
     assert op.from_tokens == tokens
     assert op.path_tokens == tokens
+
+
+def test_models_are_immutable():
+    op = TestOp[list[str]].create(path=("foo", "bar"), value=["baz", "qux"])
+    with pytest.raises(ValidationError):
+        op.op = "copy"  # ty: ignore[invalid-assignment] -- testing that frozen model rejects assignment
+
+
+def test_json_patch_can_be_parsed():
+    json_ = """[
+        {"op": "test", "path": "/a/b/c", "value": "foo"},
+        {"op": "remove", "path": "/a/b/c"}
+    ]"""
+    result = JsonPatch.model_validate_json(json_)
+    assert list(result) == [
+        TestOp(op="test", path="/a/b/c", value="foo"),
+        RemoveOp(op="remove", path="/a/b/c"),
+    ]
+
+
+def test_json_patch_round_trips():
+    json_ = """[
+        {"op": "test", "path": "/a/b/c", "value": "foo"},
+        {"op": "remove", "path": "/a/b/c"}
+    ]"""
+    result = JsonPatch.model_validate_json(json_)
+    assert result == JsonPatch.model_validate_json(result.model_dump_json())
+
+
+@pytest.fixture(name="patch")
+def _create_patch() -> JsonPatch:
+    return JsonPatch(
+        [AddOp[int].create(path="/foo", value=1), RemoveOp.create(path="/bar")]
+    )
+
+
+def test_json_patch_is_iterable(patch: JsonPatch):
+    assert list(patch) == [
+        AddOp[int].create(path="/foo", value=1),
+        RemoveOp.create(path="/bar"),
+    ]
+
+
+def test_json_patch_has_length(patch: JsonPatch):
+    assert len(patch) == 2
+
+
+def test_json_patch_supports_indexing(patch: JsonPatch):
+    assert patch[0] == AddOp[int].create(path="/foo", value=1)
+    assert patch[1] == RemoveOp.create(path="/bar")
+
+
+def test_json_patch_supports_contains(patch: JsonPatch):
+    assert AddOp[int].create(path="/foo", value=1) in patch
+
+
+def test_json_patch_supports_reversed(patch: JsonPatch):
+    assert list(reversed(patch)) == [
+        RemoveOp.create(path="/bar"),
+        AddOp[int].create(path="/foo", value=1),
+    ]
+
+
+def test_json_patch_supports_index(patch: JsonPatch):
+    assert patch.index(RemoveOp.create(path="/bar")) == 1
+
+
+def test_json_patch_supports_count(patch: JsonPatch):
+    assert patch.count(AddOp[int].create(path="/foo", value=1)) == 1
+
+
+def test_json_patch_can_be_created_from_tuple():
+    patch = JsonPatch((MoveOp.create(path="/foo", from_="/bar"),))
+    assert len(patch) == 1
+
+
+def test_json_patch_root_is_immutable():
+    patch = JsonPatch([RemoveOp.create(path="/foo")])
+    with pytest.raises(TypeError):
+        patch.root[0] = RemoveOp.create(path="/bar")  # ty: ignore[invalid-assignment] -- testing that root rejects assignment

@@ -4,7 +4,15 @@ from collections.abc import Sequence
 from functools import cached_property, lru_cache
 
 import typing_extensions as tx
-from pydantic import BaseModel, ConfigDict, Field, ValidationInfo, model_validator
+from pydantic import (
+    BaseModel,
+    ConfigDict,
+    Discriminator,
+    Field,
+    RootModel,
+    ValidationInfo,
+    model_validator,
+)
 
 _JSON_POINTER = re.compile(r"^(?:/(?:[^/~]|~[01])+)*$")
 
@@ -126,6 +134,41 @@ class ReplaceOp(_ValueOp[T], tp.Generic[T]):
 
 class TestOp(_ValueOp[T], tp.Generic[T]):
     op: tp.Literal["test"]
+
+
+# endregion
+
+# region compound models
+
+Operation: tp.TypeAlias = tp.Annotated[
+    tp.Union[AddOp, CopyOp, MoveOp, RemoveOp, ReplaceOp, TestOp], Discriminator("op")
+]
+
+
+class JsonPatch(RootModel[Sequence[Operation]], Sequence[Operation]):
+    model_config = ConfigDict(frozen=True)
+
+    @model_validator(mode="before")
+    @classmethod
+    def _coerce_to_tuple(cls, value: tp.Any) -> tuple:
+        if isinstance(value, Sequence) and not isinstance(value, tuple):
+            return tuple(value)
+        return value
+
+    @tp.overload
+    def __getitem__(self, index: int) -> Operation: ...
+
+    @tp.overload
+    def __getitem__(self, index: slice) -> list[Operation]: ...
+
+    def __getitem__(self, index):
+        return self.root[index]
+
+    def __iter__(self):
+        return iter(self.root)
+
+    def __len__(self) -> int:
+        return len(self.root)
 
 
 # endregion
