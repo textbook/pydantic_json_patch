@@ -80,7 +80,7 @@ class _FromOp(_BaseOp):
     @classmethod
     def _pre_validate(cls, data: tp.Any, info: ValidationInfo) -> tp.Any:
         if (
-            info.mode != "json"
+            info.mode != "json"  # pragma: no mutate
             and isinstance(data, dict)
             and "from_" in data
             and "from" not in data
@@ -150,7 +150,7 @@ class JsonPatch(RootModel[Sequence[Operation]], Sequence[Operation]):
 
     @model_validator(mode="before")
     @classmethod
-    def _coerce_to_tuple(cls, value: tp.Any) -> tuple:
+    def _coerce_to_tuple(cls, value: tp.Any) -> tuple[tp.Any, ...]:
         if isinstance(value, Sequence) and not isinstance(value, tuple):
             return tuple(value)
         return value

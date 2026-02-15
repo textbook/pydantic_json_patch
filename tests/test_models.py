@@ -157,9 +157,13 @@ def test_path_tokens_exposed(path: str, tokens: tuple[str, ...]):
 
 
 def test_models_are_immutable():
-    op = TestOp[list[str]].create(path=("foo", "bar"), value=["baz", "qux"])
+    patch = JsonPatch(
+        [TestOp[list[str]].create(path=("foo", "bar"), value=["baz", "qux"])]
+    )
     with pytest.raises(ValidationError):
-        op.op = "copy"  # ty: ignore[invalid-assignment] -- testing that frozen model rejects assignment
+        patch.root = []
+    with pytest.raises(ValidationError):
+        patch[0].op = "copy"  # ty: ignore[invalid-assignment] -- testing that frozen model rejects assignment
 
 
 def test_json_patch_can_be_parsed():
