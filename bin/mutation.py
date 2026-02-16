@@ -108,4 +108,5 @@ with use_db(MUTATION_DIR / "state.sqlite", mode=WorkDB.Mode.create) as work_db:
             work_db, only_completed=False, skip_success=False
         )
         report.write(doc.getvalue())
-        print(f"HTML report written to {report_path!s}", file=sys.stderr)
+        print("HTML report created", file=sys.stderr)
+        print(report_path)

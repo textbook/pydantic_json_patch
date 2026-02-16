@@ -44,14 +44,17 @@ jobs:
     runs-on: ubuntu-slim
     needs:
       - test
+    outputs:
+      report: ${{ steps.mutation.outputs.report }}
     steps:
       - uses: actions/checkout@v6
       - uses: astral-sh/setup-uv@v7
-      - run: uv run python ./bin/mutation.py
+      - run: echo "report=$(uv run python ./bin/mutation.py)" >> "$GITHUB_OUTPUT"
+        id: mutation
       - uses: actions/upload-artifact@v6
         with:
           if-no-files-found: error
-          path: mutation/index.html
+          path: ${{ steps.mutation.outputs.report }}
           name: mutation-report
 
   build:
