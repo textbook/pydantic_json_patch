@@ -23,10 +23,16 @@ T = tx.TypeVar("T", default=tp.Any)
 # region base models
 
 
+def _generate_title(model: type[tp.Any]) -> str:
+    """Strip any type metadata and expand the shortened name."""
+    name, *_ = model.__name__.partition("[")
+    return f"JsonPatch{name}eration"
+
+
 class _BaseOp(BaseModel):
     model_config = ConfigDict(
         frozen=True,
-        model_title_generator=lambda t: f"JsonPatch{t.__name__}eration",
+        model_title_generator=_generate_title,
     )
 
     @classmethod

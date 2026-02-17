@@ -242,3 +242,7 @@ def test_json_patch_root_is_immutable():
     patch = JsonPatch([RemoveOp.create(path="/foo")])
     with pytest.raises(TypeError):
         patch.root[0] = RemoveOp.create(path="/bar")  # ty: ignore[invalid-assignment] -- testing that root rejects assignment
+
+
+def test_parameterised_model_title_is_sensible():
+    assert TestOp[int].model_json_schema()["title"] == "JsonPatchTestOperation"
