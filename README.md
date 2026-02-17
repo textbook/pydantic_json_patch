@@ -120,6 +120,32 @@ and list the models along with the other schemas:
 
 [![Screenshot of Swagger UI schema list][swagger-schemas]][swagger-schemas]
 
+### Value type validation
+
+You can also use a more specific type to apply type validation to the value properties:
+
+```python
+import typing as tp
+from uuid import UUID
+
+from fastapi import Body, FastAPI
+from pydantic import Discriminator
+
+from pydantic_json_patch import AddOp, TestOp
+
+app = FastAPI()
+
+
+@app.patch("/resource/{resource_id}")
+def _(
+    resource_id: UUID,
+    operations: tp.Annotated[list[tp.Annotated[AddOp[int] | TestOp[int], Discriminator("op")]], Body()],
+) -> ...:
+    ...
+```
+
+**Note**: explicitly specifying the [discriminator][pydantic-discriminator] gives better results on _failed_ validation for unions of operations.
+
 ## Development
 
 This project uses [uv] for managing dependencies.
@@ -166,6 +192,7 @@ This will auto-restart as you make changes.
   [json patch]: https://datatracker.ietf.org/doc/html/rfc6902/
   [json pointer]: https://datatracker.ietf.org/doc/html/rfc6901/
   [pydantic]: https://docs.pydantic.dev/latest/
+  [pydantic-discriminator]: https://docs.pydantic.dev/latest/concepts/unions/#discriminated-unions-with-str-discriminators
   [pypi]: https://pypi.org/
   [pypi-badge]: https://img.shields.io/pypi/v/pydantic-json-patch?logo=python&logoColor=white&label=PyPI
   [pypi-page]: https://pypi.org/project/pydantic-json-patch/

@@ -5,6 +5,8 @@ from uuid import uuid4
 import pytest
 from fastapi.testclient import TestClient
 
+from pydantic_json_patch import JsonPatch, TestOp
+
 from .app import app
 
 
@@ -63,7 +65,16 @@ def test_valid_operations_accepted(test_client: TestClient):
 def test_invalid_patch_rejected(test_client: TestClient, body: tp.Any, message: str):
     res = test_client.patch(f"/resource/{uuid4()}", json=body)
     assert res.status_code == HTTPStatus.UNPROCESSABLE_ENTITY
-    assert message in [detail["msg"] for detail in res.json()["detail"]]
+    assert {message} == {detail["msg"] for detail in res.json()["detail"]}
+
+
+def test_models_can_be_used_to_validate_specific_op_types(test_client: TestClient):
+    patch = JsonPatch([TestOp[str].create(path="/foo/bar", value="baz")])
+    res = test_client.patch("/other_resource/123", json=patch.model_dump())
+    assert res.status_code == HTTPStatus.UNPROCESSABLE_ENTITY
+    assert {
+        "Input should be a valid integer, unable to parse string as an integer"
+    } == {detail["msg"] for detail in res.json()["detail"]}
 
 
 def test_sensible_property_examples(test_client: TestClient):
