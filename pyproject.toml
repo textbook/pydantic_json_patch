@@ -72,3 +72,25 @@ profile = "black"
 [tool.pytest.ini_options]
 addopts = "--doctest-glob=*.md"  # validate README examples
 python_classes = []  # avoid trying to run TestOp as a test
+
+[tool.ruff.lint]
+select = ["ALL"]
+ignore = [
+    "COM812",
+    "D203",
+    "D213",
+    "D105",
+]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**/*.py" = [
+    "ANN201",
+    "ANN401",
+    "C408",
+    "D",
+    "PLR2004",
+    "S101",
+]
+"bin/**/*.py" = [
+    "D",
+]

@@ -1,6 +1,8 @@
+"""Core models and private implementation."""
+
 import re
 import typing as tp
-from collections.abc import Sequence
+from collections.abc import Iterator, Sequence
 from functools import cached_property, lru_cache
 
 import typing_extensions as tx
@@ -28,7 +30,8 @@ class _BaseOp(BaseModel):
     )
 
     @classmethod
-    def create(cls, *, path: str | Sequence[str], **kwargs) -> tx.Self:
+    def create(cls, *, path: str | Sequence[str], **kwargs: tp.Any) -> tx.Self:  # noqa: ANN401
+        """Return an instance of the appropriate operation."""
         (op,) = tp.get_args(cls.model_fields["op"].annotation)
         return cls(op=op, path=cls._dump_pointer(path), **kwargs)
 
@@ -68,8 +71,12 @@ class _BaseOp(BaseModel):
 class _FromOp(_BaseOp):
     @classmethod
     def create(
-        cls, *, path: str | Sequence[str], from_: str | Sequence[str]
+        cls,
+        *,
+        path: str | Sequence[str],
+        from_: str | Sequence[str],
     ) -> tx.Self:  # ty: ignore[invalid-method-override] -- deliberately narrows **kwargs to named params
+        """Return an instance of the appropriate operation."""
         pointer = from_ if isinstance(from_, str) else cls._dump_pointer(from_)
         return super().create(path=path, **{"from": pointer})
 
@@ -78,7 +85,7 @@ class _FromOp(_BaseOp):
 
     @model_validator(mode="before")
     @classmethod
-    def _pre_validate(cls, data: tp.Any, info: ValidationInfo) -> tp.Any:
+    def _pre_validate(cls, data: tp.Any, info: ValidationInfo) -> tp.Any:  # noqa: ANN401
         if (
             info.mode != "json"  # pragma: no mutate
             and isinstance(data, dict)
@@ -97,6 +104,7 @@ class _FromOp(_BaseOp):
 class _ValueOp(_BaseOp, tp.Generic[T]):
     @classmethod
     def create(cls, *, path: str | Sequence[str], value: T) -> tx.Self:  # ty: ignore[invalid-method-override] -- deliberately narrows **kwargs to named params
+        """Return an instance of the appropriate operation."""
         return super().create(path=path, value=value)
 
     value: T = Field(examples=[42])
@@ -109,30 +117,67 @@ class _ValueOp(_BaseOp, tp.Generic[T]):
 
 
 class AddOp(_ValueOp[T], tp.Generic[T]):
+    """Represents the `add`_ operation.
+
+    .. _add: https://datatracker.ietf.org/doc/html/rfc6902/#section-4.1
+
+    """
+
     op: tp.Literal["add"]
 
 
 class CopyOp(_FromOp):
+    """Represents the `copy`_ operation.
+
+    .. _copy: https://datatracker.ietf.org/doc/html/rfc6902/#section-4.5
+
+    """
+
     op: tp.Literal["copy"]
 
 
 class MoveOp(_FromOp):
+    """Represents the `move`_ operation.
+
+    .. _move: https://datatracker.ietf.org/doc/html/rfc6902/#section-4.4
+
+    """
+
     op: tp.Literal["move"]
 
 
 class RemoveOp(_BaseOp):
+    """Represents the `remove`_ operation.
+
+    .. _remove: https://datatracker.ietf.org/doc/html/rfc6902/#section-4.2
+
+    """
+
     @classmethod
     def create(cls, *, path: str | Sequence[str]) -> tx.Self:  # ty: ignore[invalid-method-override] -- deliberately narrows **kwargs to named params
+        """Return an instance of the appropriate operation."""
         return super().create(path=path)
 
     op: tp.Literal["remove"]
 
 
 class ReplaceOp(_ValueOp[T], tp.Generic[T]):
+    """Represents the `replace`_ operation.
+
+    .. _replace: https://datatracker.ietf.org/doc/html/rfc6902/#section-4.3
+
+    """
+
     op: tp.Literal["replace"]
 
 
 class TestOp(_ValueOp[T], tp.Generic[T]):
+    """Represents the `test`_ operation.
+
+    .. _test: https://datatracker.ietf.org/doc/html/rfc6902/#section-4.6
+
+    """
+
     op: tp.Literal["test"]
 
 
@@ -141,16 +186,23 @@ class TestOp(_ValueOp[T], tp.Generic[T]):
 # region compound models
 
 Operation: tp.TypeAlias = tp.Annotated[
-    tp.Union[AddOp, CopyOp, MoveOp, RemoveOp, ReplaceOp, TestOp], Discriminator("op")
+    AddOp | CopyOp | MoveOp | RemoveOp | ReplaceOp | TestOp,
+    Discriminator("op"),
 ]
 
 
 class JsonPatch(RootModel[Sequence[Operation]], Sequence[Operation]):
+    """Represents a full JSON Patch `document`_.
+
+    .. _document: https://datatracker.ietf.org/doc/html/rfc6902/#section-3
+
+    """
+
     model_config = ConfigDict(frozen=True)
 
     @model_validator(mode="before")
     @classmethod
-    def _coerce_to_tuple(cls, value: tp.Any) -> tuple[tp.Any, ...]:
+    def _coerce_to_tuple(cls, value: tp.Any) -> tuple[tp.Any, ...]:  # noqa: ANN401
         if isinstance(value, Sequence) and not isinstance(value, tuple):
             return tuple(value)
         return value
@@ -164,7 +216,7 @@ class JsonPatch(RootModel[Sequence[Operation]], Sequence[Operation]):
     def __getitem__(self, index):
         return self.root[index]
 
-    def __iter__(self):
+    def __iter__(self) -> Iterator[Operation]:  # ty: ignore[invalid-method-override] -- dict(model) doesn't make sense for a sequence of non-pairs
         return iter(self.root)
 
     def __len__(self) -> int:

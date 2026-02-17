@@ -49,7 +49,7 @@ ReplaceOp[str](op='replace', path='/foo/bar', value='hello')
 
 Additionally, there are two compound types:
 
-- `Operation` is the union of all the operators; and
+- `Operation` is the union of all the operations; and
 - `JsonPatch` is a Pydantic `RootModel` representing a sequence of operations.
 
 `JsonPatch` can be used directly for validation:

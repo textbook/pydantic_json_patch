@@ -9,5 +9,5 @@ app = FastAPI()
 
 
 @app.patch("/resource/{resource_id}")
-def _(resource_id: UUID, operations: tp.Annotated[JsonPatch, Body()]) -> JsonPatch:
+def _(resource_id: UUID, operations: tp.Annotated[JsonPatch, Body()]) -> JsonPatch:  # noqa: ARG001
     return operations

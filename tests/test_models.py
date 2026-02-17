@@ -27,7 +27,9 @@ def test_add_op_can_be_created():
     path = "/foo/bar"
     value = 123
     assert AddOp[int].create(path=path, value=value) == AddOp(
-        op="add", path=path, value=value
+        op="add",
+        path=path,
+        value=value,
     )
 
 
@@ -64,7 +66,7 @@ def test_remove_op_can_be_parsed():
 
 
 @pytest.mark.parametrize(
-    "tokens, path",
+    ("tokens", "path"),
     [
         pytest.param("/foo/bar", "/foo/bar", id="string path"),
         pytest.param(("foo", "bar"), "/foo/bar", id="simple path"),
@@ -84,7 +86,9 @@ def test_replace_op_can_be_parsed():
     value = 123
     json_ = json.dumps(dict(op=op, path=path, value=value))
     assert ReplaceOp.model_validate_json(json_) == ReplaceOp(
-        op=op, path=path, value=value
+        op=op,
+        path=path,
+        value=value,
     )
 
 
@@ -141,7 +145,7 @@ def test_additional_members_are_ignored():
 
 
 @pytest.mark.parametrize(
-    "path, tokens",
+    ("path", "tokens"),
     [
         pytest.param("", (), id="empty path"),
         pytest.param("/foo/bar", ("foo", "bar"), id="simple path"),
@@ -158,7 +162,7 @@ def test_path_tokens_exposed(path: str, tokens: tuple[str, ...]):
 
 def test_models_are_immutable():
     patch = JsonPatch(
-        [TestOp[list[str]].create(path=("foo", "bar"), value=["baz", "qux"])]
+        [TestOp[list[str]].create(path=("foo", "bar"), value=["baz", "qux"])],
     )
     with pytest.raises(ValidationError):
         patch.root = []
@@ -190,7 +194,7 @@ def test_json_patch_round_trips():
 @pytest.fixture(name="patch")
 def _create_patch() -> JsonPatch:
     return JsonPatch(
-        [AddOp[int].create(path="/foo", value=1), RemoveOp.create(path="/bar")]
+        [AddOp[int].create(path="/foo", value=1), RemoveOp.create(path="/bar")],
     )
 
 

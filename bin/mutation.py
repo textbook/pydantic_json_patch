@@ -13,10 +13,8 @@ Per the `tutorial`_, this will:
 
 """
 
-import glob
 import logging
 import pathlib
-import sys
 import tempfile
 from argparse import Namespace
 from contextlib import redirect_stdout
@@ -32,7 +30,7 @@ from cosmic_ray.tools.filters.pragma_no_mutate import PragmaNoMutateFilter
 from cosmic_ray.tools.html import _generate_html_report
 from cosmic_ray.tools.survival_rate import kills_count, survival_rate
 from cosmic_ray.work_db import WorkDB, use_db
-from cosmic_ray.work_item import TestOutcome, WorkItem
+from cosmic_ray.work_item import TestOutcome, WorkItem, WorkResult
 
 ROOT = (pathlib.Path(__file__).parent / "..").resolve()
 CONFIG_FILE = ROOT / "cosmic-ray.toml"
@@ -40,31 +38,37 @@ MUTATION_DIR = ROOT / "mutation"
 
 MUTATION_DIR.mkdir(exist_ok=True)
 
-config_dict = load_config(CONFIG_FILE)
+logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
-logger.addHandler(logging.StreamHandler())
+# Cosmic Ray logs to its own logger and the root logger
+logging.getLogger().setLevel(logging.WARNING)
+logging.getLogger("cosmic_ray").setLevel(logging.WARNING)
+
+config_dict = load_config(CONFIG_FILE)
 modules = [
     ROOT / config_dict["module-path"] / module
-    for module in glob.glob("*.py", root_dir=ROOT / config_dict["module-path"])
+    for module in (ROOT / config_dict["module-path"]).rglob("*.py")
 ]
 
 
-def baseline(config: ConfigDict, /):
+def baseline(config: ConfigDict, /) -> None:
     """Ensure the tests can pass via Cosmic Ray before mutating."""
-    with tempfile.TemporaryDirectory() as temp_dir:
-        with use_db(
+    with (
+        tempfile.TemporaryDirectory() as temp_dir,
+        use_db(
             pathlib.Path(temp_dir) / "baseline.sqlite", mode=WorkDB.Mode.create
-        ) as db:
-            db.clear()
-            db.add_work_item(
-                WorkItem(
-                    mutations=[],  # ty: ignore[invalid-argument-type] -- library definition is wrong
-                    job_id="baseline",
-                )
-            )
-            commands.execute(db, config=config)
-            if next(db.results)[1] == TestOutcome.KILLED:
-                raise RuntimeError("test baseline failed")
+        ) as db,
+    ):
+        db.clear()
+        db.add_work_item(
+            WorkItem(
+                mutations=[],  # ty: ignore[invalid-argument-type] -- library definition is wrong
+                job_id="baseline",
+            ),
+        )
+        commands.execute(db, config=config)
+        if next(db.results)[1] == TestOutcome.KILLED:
+            raise RuntimeError("test baseline failed")  # noqa: EM101, TRY003
 
 
 baseline(config_dict)
@@ -85,9 +89,9 @@ with use_db(MUTATION_DIR / "state.sqlite", mode=WorkDB.Mode.create) as work_db:
 
     with tqdm.tqdm(total=work_db.num_work_items) as progress:
 
-        def on_task_complete(job_id, work_result):
+        def on_task_complete(job_id: str, work_result: WorkResult) -> None:
             work_db.set_result(job_id, work_result)
-            progress.update(1)
+            progress.update(work_db.num_results - progress.n)
 
         distributor(
             work_db.pending_work_items,
@@ -97,16 +101,20 @@ with use_db(MUTATION_DIR / "state.sqlite", mode=WorkDB.Mode.create) as work_db:
             on_task_complete=on_task_complete,
         )
 
-    print(
-        f"killed {kills_count(work_db):,} / {work_db.num_results:,} mutants (survival rate: {survival_rate(work_db):.1f}%)",
-        file=sys.stderr,
+    logger.info(
+        "killed %d / %d mutants (survival rate: %.1f%%)",
+        kills_count(work_db),
+        work_db.num_results,
+        survival_rate(work_db),
     )
 
     report_path = MUTATION_DIR / "index.html"
-    with open(report_path, mode="w") as report:
+    with report_path.open(mode="w") as report:
         doc: yattag.Doc = _generate_html_report(
-            work_db, only_completed=False, skip_success=False
+            work_db,
+            only_completed=False,
+            skip_success=False,
         )
         report.write(doc.getvalue())
-        print("HTML report created", file=sys.stderr)
-        print(report_path)
+        logger.info("HTML report created")
+        print(report_path)  # noqa: T201

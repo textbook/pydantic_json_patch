@@ -1,3 +1,9 @@
+"""Pydantic models for implementing `JSON Patch`_.
+
+.. _JSON Patch: https://datatracker.ietf.org/doc/html/rfc6902/
+
+"""
+
 from importlib.metadata import version
 
 from .models import (
@@ -14,7 +20,6 @@ from .models import (
 __version__ = version(__name__)
 
 __all__ = [
-    "__version__",
     "AddOp",
     "CopyOp",
     "JsonPatch",
@@ -23,4 +28,5 @@ __all__ = [
     "RemoveOp",
     "ReplaceOp",
     "TestOp",
+    "__version__",
 ]
