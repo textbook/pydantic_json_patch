@@ -6,6 +6,11 @@ ROOT="$(cd "$HERE/.." && pwd)"
 
 COMMAND="${1:-check}"
 
+if [ "$#" -gt 1 ]; then
+  echo 'usage: ./bin/dev.sh [command]'
+  exit 1
+fi
+
 uvRun () {
   uv --directory="$ROOT" run "$@"
 }
