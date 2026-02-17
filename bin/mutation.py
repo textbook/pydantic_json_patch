@@ -17,7 +17,8 @@ import logging
 import pathlib
 import tempfile
 from argparse import Namespace
-from contextlib import redirect_stdout
+from collections.abc import Iterator
+from contextlib import contextmanager, redirect_stdout
 from io import StringIO
 
 import tqdm
@@ -40,8 +41,6 @@ MUTATION_DIR.mkdir(exist_ok=True)
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
-# Cosmic Ray logs to its own logger and the root logger
-logging.getLogger().setLevel(logging.WARNING)
 logging.getLogger("cosmic_ray").setLevel(logging.WARNING)
 
 config_dict = load_config(CONFIG_FILE)
@@ -49,6 +48,16 @@ modules = [
     ROOT / config_dict["module-path"] / module
     for module in (ROOT / config_dict["module-path"]).rglob("*.py")
 ]
+
+
+@contextmanager
+def temporary_log_level(level: int, *, name: str | None = None) -> Iterator[None]:
+    """Reset a logger level for the duration of the context."""
+    logger_ = logging.getLogger(name)
+    original_level = logger_.level
+    logger_.setLevel(level)
+    yield
+    logger_.setLevel(original_level)
 
 
 def baseline(config: ConfigDict, /) -> None:
@@ -81,9 +90,12 @@ with use_db(MUTATION_DIR / "state.sqlite", mode=WorkDB.Mode.create) as work_db:
     )
 
     args = Namespace(config=str(CONFIG_FILE))
-    OperatorsFilter().filter(work_db, args)
+    # Operators filter uses the root logger
+    with temporary_log_level(logging.WARNING):
+        OperatorsFilter().filter(work_db, args)
+    # Pragma filter uses print
     with redirect_stdout(StringIO()):
-        PragmaNoMutateFilter().filter(work_db, args)
+        PragmaNoMutateFilter().filter(work_db, args)  # uses print
 
     distributor = get_distributor(config_dict.distributor_name)
 
