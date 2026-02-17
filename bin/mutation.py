@@ -95,7 +95,7 @@ with use_db(MUTATION_DIR / "state.sqlite", mode=WorkDB.Mode.create) as work_db:
         OperatorsFilter().filter(work_db, args)
     # Pragma filter uses print
     with redirect_stdout(StringIO()):
-        PragmaNoMutateFilter().filter(work_db, args)  # uses print
+        PragmaNoMutateFilter().filter(work_db, args)
 
     distributor = get_distributor(config_dict.distributor_name)
 
