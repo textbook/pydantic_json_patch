@@ -123,9 +123,9 @@ class _ValueOp(_BaseOp, tp.Generic[T]):
 
 
 class AddOp(_ValueOp[T], tp.Generic[T]):
-    """Represents the `add`_ operation.
+    """Represents the [add] operation.
 
-    .. _add: https://datatracker.ietf.org/doc/html/rfc6902/#section-4.1
+    [add]: https://datatracker.ietf.org/doc/html/rfc6902/#section-4.1
 
     """
 
@@ -133,9 +133,9 @@ class AddOp(_ValueOp[T], tp.Generic[T]):
 
 
 class CopyOp(_FromOp):
-    """Represents the `copy`_ operation.
+    """Represents the [copy] operation.
 
-    .. _copy: https://datatracker.ietf.org/doc/html/rfc6902/#section-4.5
+    [copy]: https://datatracker.ietf.org/doc/html/rfc6902/#section-4.5
 
     """
 
@@ -143,9 +143,9 @@ class CopyOp(_FromOp):
 
 
 class MoveOp(_FromOp):
-    """Represents the `move`_ operation.
+    """Represents the [move] operation.
 
-    .. _move: https://datatracker.ietf.org/doc/html/rfc6902/#section-4.4
+    [move]: https://datatracker.ietf.org/doc/html/rfc6902/#section-4.4
 
     """
 
@@ -153,9 +153,9 @@ class MoveOp(_FromOp):
 
 
 class RemoveOp(_BaseOp):
-    """Represents the `remove`_ operation.
+    """Represents the [remove] operation.
 
-    .. _remove: https://datatracker.ietf.org/doc/html/rfc6902/#section-4.2
+    [remove]: https://datatracker.ietf.org/doc/html/rfc6902/#section-4.2
 
     """
 
@@ -168,9 +168,9 @@ class RemoveOp(_BaseOp):
 
 
 class ReplaceOp(_ValueOp[T], tp.Generic[T]):
-    """Represents the `replace`_ operation.
+    """Represents the [replace] operation.
 
-    .. _replace: https://datatracker.ietf.org/doc/html/rfc6902/#section-4.3
+    [replace]: https://datatracker.ietf.org/doc/html/rfc6902/#section-4.3
 
     """
 
@@ -178,9 +178,9 @@ class ReplaceOp(_ValueOp[T], tp.Generic[T]):
 
 
 class TestOp(_ValueOp[T], tp.Generic[T]):
-    """Represents the `test`_ operation.
+    """Represents the [test] operation.
 
-    .. _test: https://datatracker.ietf.org/doc/html/rfc6902/#section-4.6
+    [test]: https://datatracker.ietf.org/doc/html/rfc6902/#section-4.6
 
     """
 
@@ -198,9 +198,9 @@ Operation: tp.TypeAlias = tp.Annotated[
 
 
 class JsonPatch(RootModel[Sequence[Operation]], Sequence[Operation]):
-    """Represents a full JSON Patch `document`_.
+    """Represents a full JSON Patch [document].
 
-    .. _document: https://datatracker.ietf.org/doc/html/rfc6902/#section-3
+    [document]: https://datatracker.ietf.org/doc/html/rfc6902/#section-3
 
     """
 
