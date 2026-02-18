@@ -24,9 +24,9 @@ T = tx.TypeVar("T", default=tp.Any)
 
 
 def _generate_title(model: type[tp.Any]) -> str:
-    """Strip any type metadata and expand the shortened name."""
-    name, *_ = model.__name__.partition("[")
-    return f"JsonPatch{name}eration"
+    """Prefix with 'JsonPatch' and expand 'Op' contraction."""
+    name, *rest = model.__name__.partition("[")
+    return "".join(("JsonPatch", name, "eration", *rest))
 
 
 class _BaseOp(BaseModel):
@@ -108,6 +108,15 @@ class _FromOp(_BaseOp):
 
 
 class _ValueOp(_BaseOp, tp.Generic[T]):
+    @classmethod
+    def __class_getitem__(
+        cls, typevar_values: type[tp.Any] | tuple[type[tp.Any], ...]
+    ) -> type[BaseModel]:
+        """Propagate docstring to generic alias."""
+        alias = super().__class_getitem__(typevar_values)
+        alias.__doc__ = cls.__doc__
+        return alias
+
     @classmethod
     def create(cls, *, path: str | Sequence[str], value: T) -> tx.Self:  # ty: ignore[invalid-method-override] -- deliberately narrows **kwargs to named params
         """Return an instance of the appropriate operation."""

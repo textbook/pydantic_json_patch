@@ -144,7 +144,10 @@ def _(
     ...
 ```
 
-**Note**: explicitly specifying the [discriminator][pydantic-discriminator] gives better results on _failed_ validation for unions of operations.
+**Notes**:
+
+- Explicitly specifying the [discriminator][pydantic-discriminator] gives better results on _failed_ validation for unions of operations; and
+- Parameterised versions of the operations will also appear in the JSON Schema as e.g. `AddOp_int_` (with the title _"JsonPatchAddOperation\[int\]"_).
 
 ## Development
 

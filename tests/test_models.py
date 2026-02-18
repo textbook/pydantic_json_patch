@@ -2,6 +2,8 @@ import json
 import typing as tp
 
 import pytest
+from joythief.data_structures import DictContaining
+from joythief.strings import StringMatching
 from pydantic import ValidationError
 
 from pydantic_json_patch import (
@@ -244,5 +246,8 @@ def test_json_patch_root_is_immutable():
         patch.root[0] = RemoveOp.create(path="/bar")  # ty: ignore[invalid-assignment] -- testing that root rejects assignment
 
 
-def test_parameterised_model_title_is_sensible():
-    assert TestOp[int].model_json_schema()["title"] == "JsonPatchTestOperation"
+def test_parameterised_model_schema_is_sensible():
+    assert TestOp[int].model_json_schema() == DictContaining(
+        description=StringMatching(r"^Represents the \[test] operation\."),
+        title="JsonPatchTestOperation[int]",
+    )

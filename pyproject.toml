@@ -49,6 +49,7 @@ dev = [
     "fastapi-cli>=0.0.20",
     "httpx>=0.28.1",
     "isort>=7.0.0",
+    "joythief>=0.8.1",
     "pre-commit>=4.5.1",
     "pytest>=9.0.2",
     "ruff>=0.15.0",
