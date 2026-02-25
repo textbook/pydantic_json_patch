@@ -11,16 +11,16 @@ if [[ "$#" -gt 1 ]]; then
   exit 1
 fi
 
-uvRun () {
+uv_run () {
   uv --directory="$ROOT" run "$@"
 }
 
 check () {
-  uvRun ty check
-  uvRun ruff check
-  uvRun ruff format --check
-  uvRun coverage run --module pytest
-  uvRun coverage report
+  uv_run ty check
+  uv_run ruff check
+  uv_run ruff format --check
+  uv_run coverage run --module pytest
+  uv_run coverage report
 }
 
 ship () {
