@@ -1,4 +1,9 @@
 {
   "python.analysis.typeCheckingMode": "standard",
-  "python.defaultInterpreterPath": "${env:UV_PROJECT_ENVIRONMENT}"
+  "python.defaultInterpreterPath": "${env:UV_PROJECT_ENVIRONMENT}",
+  "python.testing.pytestArgs": [
+    "tests"
+  ],
+  "python.testing.unittestEnabled": false,
+  "python.testing.pytestEnabled": true
 }
