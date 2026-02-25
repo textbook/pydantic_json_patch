@@ -124,6 +124,7 @@ with use_db(MUTATION_DIR / "state.sqlite", mode=WorkDB.Mode.create) as work_db:
     with report_path.open(mode="w") as report:
         doc: yattag.Doc = _generate_html_report(
             work_db,
+            hide_skipped=False,
             only_completed=False,
             skip_success=False,
         )

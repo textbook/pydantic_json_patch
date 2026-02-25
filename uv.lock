@@ -247,11 +247,12 @@ wheels = [
 
 [[package]]
 name = "cosmic-ray"
-version = "8.4.3"
+version = "8.4.4"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "aiohttp" },
     { name = "anybadge" },
+    { name = "attrs" },
     { name = "click" },
     { name = "decorator" },
     { name = "exit-codes" },
@@ -264,9 +265,9 @@ dependencies = [
     { name = "toml" },
     { name = "yattag" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/34/86/165465d3c84b2f4093f06fbb452512964ee178f81d4841ae0d9beea94b38/cosmic_ray-8.4.3.tar.gz", hash = "sha256:547aaffed35c02ee37ab8a6f93ef9dbbe9d20671216317742461855e9910df8f", size = 44090, upload-time = "2025-09-21T11:11:43.248Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/ce/e1/599dafbd0719007b0850fa76782133a280741c17728c8477cca805dea658/cosmic_ray-8.4.4.tar.gz", hash = "sha256:a050e46e0720dc706374a1b125926b80eef44edbc7e75e170380c33970fbfd69", size = 44125, upload-time = "2026-02-21T10:50:34.184Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/f8/94/960e9b1e066ea6206486592fc66f3fc56b76a507befe01aca67ca2e757aa/cosmic_ray-8.4.3-py3-none-any.whl", hash = "sha256:fcc0a80c348359d941435fe61294a258b61ae3d7fcfc122ae117205cd0546247", size = 59990, upload-time = "2025-09-21T11:11:41.666Z" },
+    { url = "https://files.pythonhosted.org/packages/58/65/c2342068f9ab9282e7eafe78a4261f99d9bc07b19f45253d2649c069d806/cosmic_ray-8.4.4-py3-none-any.whl", hash = "sha256:0b1d8bd1065b9f94c900e56b75f29f37ec8da8b17a0ed32f9a053d9458409ed4", size = 60186, upload-time = "2026-02-21T10:50:32.736Z" },
 ]
 
 [[package]]
