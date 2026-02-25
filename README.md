@@ -1,8 +1,9 @@
 # Pydantic JSON Patch
 
 [![Python uv CI][ci-badge]][ci-page]
-[![Coverage Status][coverage-badge]][coverage-page]
 [![PyPI - Version][pypi-badge]][pypi-page]
+[![SonarQube Cloud - Maintainability][sonar-badge]][sonar-page]
+[![Coverage Status][coverage-badge]][coverage-page]
 
 [Pydantic] models for implementing [JSON Patch].
 
@@ -188,8 +189,8 @@ This will auto-restart as you make changes.
 
   [ci-badge]: https://github.com/textbook/pydantic_json_patch/actions/workflows/push.yml/badge.svg
   [ci-page]: https://github.com/textbook/pydantic_json_patch/actions/workflows/push.yml
-  [coverage-badge]: https://coveralls.io/repos/github/textbook/pydantic_json_patch/badge.svg?branch=main
-  [coverage-page]: https://coveralls.io/github/textbook/pydantic_json_patch?branch=main
+  [coverage-badge]: https://sonarcloud.io/api/project_badges/measure?project=textbook_pydantic_json_patch&metric=coverage
+  [coverage-page]: https://sonarcloud.io/summary/new_code?id=textbook_pydantic_json_patch
   [fastapi]: https://fastapi.tiangolo.com/
   [isort]: https://pycqa.github.io/isort/
   [json patch]: https://datatracker.ietf.org/doc/html/rfc6902/
@@ -201,6 +202,8 @@ This will auto-restart as you make changes.
   [pypi-page]: https://pypi.org/project/pydantic-json-patch/
   [pytest]: https://docs.pytest.org/en/stable/
   [ruff]: https://docs.astral.sh/ruff/
+  [sonar-badge]: https://sonarcloud.io/api/project_badges/measure?project=textbook_pydantic_json_patch&metric=sqale_rating
+  [sonar-page]: https://sonarcloud.io/summary/new_code?id=textbook_pydantic_json_patch
   [swagger-example]: https://github.com/textbook/pydantic_json_patch/blob/main/docs/swagger-example.png?raw=true
   [swagger-schemas]: https://github.com/textbook/pydantic_json_patch/blob/main/docs/swagger-schemas.png?raw=true
   [ty]: https://docs.astral.sh/ty/

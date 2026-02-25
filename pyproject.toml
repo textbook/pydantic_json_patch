@@ -67,6 +67,9 @@ omit = ["tests/**"]
 [tool.coverage.lcov]
 output = "coverage/lcov.info"
 
+[tool.coverage.xml]
+output = "coverage/coverage.xml"
+
 [tool.isort]
 profile = "black"
 

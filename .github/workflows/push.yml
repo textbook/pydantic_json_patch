@@ -33,12 +33,12 @@ jobs:
       - run: uv run ruff check
       - run: uv run ruff format --check
       - run: uv run coverage run --module pytest
-      - run: uv run coverage lcov
       - run: uv run coverage report
-      - if: matrix.python == '3.14'
-        uses: coverallsapp/github-action@v2
-        with:
-          file: coverage/lcov.info
+      - run: uv run coverage xml
+      - if: matrix.python == '3.13'
+        uses: SonarSource/sonarqube-scan-action@v7
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
   mutation:
     runs-on: ubuntu-slim
