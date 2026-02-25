@@ -64,6 +64,9 @@ mutation = [
 [tool.coverage.run]
 omit = ["tests/**"]
 
+[tool.coverage.html]
+directory = "coverage/html/"
+
 [tool.coverage.lcov]
 output = "coverage/lcov.info"
 
