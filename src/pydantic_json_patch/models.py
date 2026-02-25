@@ -217,7 +217,7 @@ class JsonPatch(RootModel[Sequence[Operation]], Sequence[Operation]):
 
     @model_validator(mode="before")
     @classmethod
-    def _coerce_to_tuple(cls, value: tp.Any) -> tuple[tp.Any, ...]:  # noqa: ANN401
+    def _coerce_seq_to_tuple(cls, value: tp.Any) -> tp.Any:  # noqa: ANN401
         if isinstance(value, Sequence) and not isinstance(value, tuple):
             return tuple(value)
         return value
@@ -226,7 +226,7 @@ class JsonPatch(RootModel[Sequence[Operation]], Sequence[Operation]):
     def __getitem__(self, index: int) -> Operation: ...
 
     @tp.overload
-    def __getitem__(self, index: slice) -> list[Operation]: ...
+    def __getitem__(self, index: slice) -> tuple[Operation, ...]: ...
 
     def __getitem__(self, index):
         return self.root[index]

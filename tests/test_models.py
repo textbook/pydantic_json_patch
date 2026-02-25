@@ -233,6 +233,10 @@ def test_json_patch_supports_indexing(patch: JsonPatch):
     assert patch[1] == RemoveOp.create(path="/bar")
 
 
+def test_json_patch_supports_slicing(patch: JsonPatch):
+    assert patch[0:1] == (AddOp[int].create(path="/foo", value=1),)
+
+
 def test_json_patch_supports_contains(patch: JsonPatch):
     assert AddOp[int].create(path="/foo", value=1) in patch
 
