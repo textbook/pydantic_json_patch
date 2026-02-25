@@ -31,5 +31,8 @@
         "ms-python.vscode-pylance"
       ]
     }
+  },
+  "features": {
+    "ghcr.io/devcontainers/features/github-cli:1": {}
   }
 }
