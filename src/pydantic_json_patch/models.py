@@ -26,6 +26,9 @@ T = tx.TypeVar("T", default=tp.Any)
 def _generate_title(model: type[tp.Any]) -> str:
     """Prefix with 'JsonPatch' and expand 'Op' contraction."""
     name, *rest = model.__name__.partition("[")
+    if not name.endswith("Op"):
+        msg = f"{name!r} does not end with 'Op'"
+        raise ValueError(msg)
     return "".join(("JsonPatch", name, "eration", *rest))
 
 

@@ -17,6 +17,14 @@ from pydantic_json_patch import (
 )
 
 
+def test_generate_title_requires_op_suffix():
+    class Foo(AddOp):
+        pass
+
+    with pytest.raises(ValueError, match="'Foo'"):
+        Foo.model_json_schema()
+
+
 def test_add_op_can_be_parsed():
     op: tp.Literal["add"] = "add"
     path = "/foo/bar"
