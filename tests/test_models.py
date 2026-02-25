@@ -1,4 +1,5 @@
 import json
+import time
 import typing as tp
 
 import pytest
@@ -15,6 +16,8 @@ from pydantic_json_patch import (
     ReplaceOp,
     TestOp,
 )
+
+ONE_HUNDRED_MILLISECONDS: float = 0.1
 
 
 def test_generate_title_requires_op_suffix():
@@ -273,6 +276,25 @@ def test_json_patch_root_is_immutable():
     patch = JsonPatch([RemoveOp.create(path="/foo")])
     with pytest.raises(TypeError):
         patch.root[0] = RemoveOp.create(path="/bar")  # ty: ignore[invalid-assignment] -- testing that root rejects assignment
+
+
+@pytest.mark.parametrize(
+    "payload",
+    [
+        pytest.param("/" + "a" * 100_000 + "~", id="long segment invalid tail"),
+        pytest.param("/" + "~0" * 50_000 + "~", id="long escapes invalid tail"),
+        pytest.param("/" + "a~0" * 30_000 + "~", id="mixed content invalid tail"),
+    ],
+)
+def test_json_pointer_regex_is_not_vulnerable_to_redos(payload: str):
+    """The JSON Pointer regex must reject adversarial input in linear time."""
+    start = time.perf_counter()
+    with pytest.raises(ValidationError):
+        RemoveOp.model_validate({"op": "remove", "path": payload})
+    elapsed = time.perf_counter() - start
+    assert elapsed < ONE_HUNDRED_MILLISECONDS, (
+        f"validation took {elapsed:.1f}s — possible ReDoS"
+    )
 
 
 def test_parameterised_model_schema_is_sensible():
