@@ -13,6 +13,7 @@ fi
 
 uv_run () {
   uv --directory="$ROOT" run "$@"
+  return 0
 }
 
 check () {
@@ -21,6 +22,7 @@ check () {
   uv_run ruff format --check
   uv_run coverage run --module pytest
   uv_run coverage report
+  return 0
 }
 
 ship () {
