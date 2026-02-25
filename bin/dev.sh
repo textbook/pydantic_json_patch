@@ -6,7 +6,7 @@ ROOT="$(cd "$HERE/.." && pwd)"
 
 COMMAND="${1:-check}"
 
-if [ "$#" -gt 1 ]; then
+if [[ "$#" -gt 1 ]]; then
   echo 'usage: ./bin/dev.sh [command]'
   exit 1
 fi
@@ -25,7 +25,7 @@ check () {
 
 ship () {
   check
-  if [ -z "$(git status --porcelain --untracked-files=no)" ]; then
+  if [[ -z "$(git status --porcelain --untracked-files=no)" ]]; then
     echo 'ship it 🚢' && git push
   else
     echo 'all checks passed but repo state is not clean' && exit 1
