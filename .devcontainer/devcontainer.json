@@ -1,0 +1,35 @@
+{
+  "dockerFile": "Dockerfile",
+  "remoteEnv": {
+    "IS_SANDBOX": "1",
+    "UV_LINK_MODE": "copy",
+    "UV_PROJECT_ENVIRONMENT": "/home/vscode/.virtualenvs/pydantic_json_patch"
+  },
+  "mounts": [
+    {
+      "source": "pjp-os-cache",
+      "target": "/home/vscode/.cache",
+      "type": "volume"
+    },
+    {
+      "source": "pjp-virtualenvs",
+      "target": "/home/vscode/.virtualenvs",
+      "type": "volume"
+    }
+  ],
+  "postCreateCommand": "sudo chown -R vscode /home/vscode && uv sync && uv run pre-commit install",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "anthropic.claude-code",
+        "astral-sh.ty",
+        "charliermarsh.ruff",
+        "ms-azuretools.vscode-containers",
+        "ms-python.debugpy",
+        "ms-python.isort",
+        "ms-python.python",
+        "ms-python.vscode-pylance"
+      ]
+    }
+  }
+}

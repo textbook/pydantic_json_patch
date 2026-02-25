@@ -1,0 +1,4 @@
+{
+  "python.analysis.typeCheckingMode": "standard",
+  "python.defaultInterpreterPath": "${env:UV_PROJECT_ENVIRONMENT}"
+}
