@@ -16,7 +16,7 @@ from pydantic import (
     model_validator,
 )
 
-_JSON_POINTER = re.compile(r"^(?:/(?:[^/~]|~[01])+)*$")
+_JSON_POINTER = re.compile(r"^(?:/(?:[^/~]|~[01])*)*$")
 
 T = tx.TypeVar("T", default=tp.Any)
 

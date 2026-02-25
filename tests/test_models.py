@@ -103,11 +103,28 @@ def test_test_op_can_be_parsed():
 
 
 @pytest.mark.parametrize(
+    ("path", "tokens"),
+    [
+        pytest.param("/", ("",), id="single slash"),
+        pytest.param("//foo", ("", "foo"), id="leading empty token"),
+        pytest.param("/foo/", ("foo", ""), id="trailing empty token"),
+    ],
+)
+def test_empty_reference_tokens_are_valid(path: str, tokens: tuple[str, ...]):
+    """Per RFC 6901, reference tokens may be empty strings.
+
+    reference-token = *( unescaped / escaped )
+
+    """
+    op = RemoveOp.create(path=path)
+    assert op.path_tokens == tokens
+
+
+@pytest.mark.parametrize(
     "path",
     [
         pytest.param("foo/bar", id="no leading slash"),
-        pytest.param("//foo/bar", id="two consecutive slashes"),
-        pytest.param("/foo/bar/", id="trailing slash"),
+        pytest.param("/foo~bar", id="unescaped tilde"),
     ],
 )
 def test_invalid_path_is_not_allowed(path: str):
@@ -120,8 +137,6 @@ def test_invalid_path_is_not_allowed(path: str):
     "from_",
     [
         pytest.param("foo/bar", id="no leading slash"),
-        pytest.param("//foo/bar", id="two consecutive slashes"),
-        pytest.param("/foo/bar/", id="trailing slash"),
         pytest.param("/foo~bar", id="unescaped tilde"),
     ],
 )

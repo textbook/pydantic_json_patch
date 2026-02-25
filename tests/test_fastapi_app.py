@@ -4,6 +4,7 @@ from uuid import uuid4
 
 import pytest
 from fastapi.testclient import TestClient
+from joythief.strings import StringMatching
 
 from pydantic_json_patch import JsonPatch, TestOp
 
@@ -52,7 +53,7 @@ def test_valid_operations_accepted(test_client: TestClient):
         ),
         pytest.param(
             [{"op": "test", "path": "not-a-path", "value": None}],
-            "String should match pattern '^(?:/(?:[^/~]|~[01])+)*$'",
+            StringMatching("^String should match pattern"),
             id="invalid path",
         ),
         pytest.param(
@@ -62,10 +63,13 @@ def test_valid_operations_accepted(test_client: TestClient):
         ),
     ],
 )
-def test_invalid_patch_rejected(test_client: TestClient, body: tp.Any, message: str):
+def test_invalid_patch_rejected(
+    test_client: TestClient, body: tp.Any, message: str | StringMatching
+):
     res = test_client.patch(f"/resource/{uuid4()}", json=body)
     assert res.status_code == HTTPStatus.UNPROCESSABLE_ENTITY
-    assert {message} == {detail["msg"] for detail in res.json()["detail"]}
+    (actual,) = [detail["msg"] for detail in res.json()["detail"]]
+    assert message == actual
 
 
 def test_models_can_be_used_to_validate_specific_op_types(test_client: TestClient):
