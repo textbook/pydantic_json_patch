@@ -13,7 +13,7 @@ dependencies = [
 ]
 license = "ISC"
 classifiers = [
-    "Development Status :: 4 - Beta",
+    "Development Status :: 5 - Production/Stable",
     "Framework :: FastAPI",
     "Framework :: Pydantic",
     "Framework :: Pydantic :: 2",
