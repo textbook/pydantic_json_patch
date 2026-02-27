@@ -39,7 +39,7 @@ class _BaseOp(BaseModel):
     )
 
     @classmethod
-    def create(cls, *, path: str | Sequence[str], **kwargs: tp.Any) -> tx.Self:  # noqa: ANN401
+    def create(cls, /, *, path: str | Sequence[str], **kwargs: tp.Any) -> tx.Self:  # noqa: ANN401
         """Return an instance of the appropriate operation."""
         (op,) = tp.get_args(cls.model_fields["op"].annotation)
         return cls(op=op, path=cls._dump_pointer(path), **kwargs)
@@ -81,6 +81,7 @@ class _FromOp(_BaseOp):
     @classmethod
     def create(
         cls,
+        /,
         *,
         path: str | Sequence[str],
         from_: str | Sequence[str],
@@ -121,7 +122,7 @@ class _ValueOp(_BaseOp, tp.Generic[T]):
         return alias
 
     @classmethod
-    def create(cls, *, path: str | Sequence[str], value: T) -> tx.Self:  # ty: ignore[invalid-method-override] -- deliberately narrows **kwargs to named params
+    def create(cls, /, *, path: str | Sequence[str], value: T) -> tx.Self:  # ty: ignore[invalid-method-override] -- deliberately narrows **kwargs to named params
         """Return an instance of the appropriate operation."""
         return super().create(path=path, value=value)
 
@@ -172,7 +173,7 @@ class RemoveOp(_BaseOp):
     """
 
     @classmethod
-    def create(cls, *, path: str | Sequence[str]) -> tx.Self:  # ty: ignore[invalid-method-override] -- deliberately narrows **kwargs to named params
+    def create(cls, /, *, path: str | Sequence[str]) -> tx.Self:  # ty: ignore[invalid-method-override] -- deliberately narrows **kwargs to named params
         """Return an instance of the appropriate operation."""
         return super().create(path=path)
 
