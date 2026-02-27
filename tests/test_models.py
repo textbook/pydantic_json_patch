@@ -302,3 +302,47 @@ def test_parameterised_model_schema_is_sensible():
         description=StringMatching(r"^Represents the \[test] operation\."),
         title="JsonPatchTestOperation[int]",
     )
+
+
+_JSON_DOCUMENT: tp.Any = {
+    "foo": ["bar", "baz"],
+    "": 0,
+    "a/b": 1,
+    "c%d": 2,
+    "e^f": 3,
+    "g|h": 4,
+    "i\\j": 5,
+    'k"l': 6,
+    " ": 7,
+    "m~n": 8,
+}
+
+
+@pytest.mark.parametrize(
+    ("path", "expected"),
+    [
+        ("", _JSON_DOCUMENT),
+        ("/foo", ["bar", "baz"]),
+        ("/foo/0", "bar"),
+        ("/", 0),
+        ("/a~1b", 1),
+        ("/c%d", 2),
+        ("/e^f", 3),
+        ("/g|h", 4),
+        ("/i\\j", 5),
+        ('/k"l', 6),
+        ("/ ", 7),
+        ("/m~0n", 8),
+    ],
+)
+def test_canonical_json_pointer_examples(path: str, expected: tp.Any):
+    """Test [examples] from RFC 6091.
+
+    [examples]: https://datatracker.ietf.org/doc/html/rfc6901#section-5
+
+    """
+    op = RemoveOp.create(path=path)
+    target = _JSON_DOCUMENT
+    for token in op.path_tokens:
+        target = target[int(token) if token.isdecimal() else token]
+    assert target == expected
