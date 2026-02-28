@@ -2,6 +2,7 @@
   "recommendations": [
     "astral-sh.ty",
     "charliermarsh.ruff",
+    "github.vscode-github-actions",
     "ms-python.debugpy",
     "ms-python.isort",
     "ms-python.python",

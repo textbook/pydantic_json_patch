@@ -24,6 +24,7 @@
         "anthropic.claude-code",
         "astral-sh.ty",
         "charliermarsh.ruff",
+        "github.vscode-github-actions",
         "ms-azuretools.vscode-containers",
         "ms-python.debugpy",
         "ms-python.isort",
