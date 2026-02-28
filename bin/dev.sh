@@ -36,6 +36,7 @@ ship () {
 
 case "$COMMAND" in
   check) check;;
+  'lint:fix') uv_run ruff format;;
   ship) ship;;
   *) echo "unsupported command: $COMMAND"; exit 1;;
 esac
