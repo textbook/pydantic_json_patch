@@ -36,6 +36,7 @@ class _BaseOp(BaseModel):
     model_config = ConfigDict(
         frozen=True,
         model_title_generator=_generate_title,
+        strict=True,
     )
 
     @classmethod

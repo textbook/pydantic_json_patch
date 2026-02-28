@@ -346,3 +346,8 @@ def test_canonical_json_pointer_examples(path: str, expected: tp.Any):
     for token in op.path_tokens:
         target = target[int(token) if token.isdecimal() else token]
     assert target == expected
+
+
+def test_model_values_are_not_coerced():
+    with pytest.raises(ValidationError, match="Input should be a valid integer"):
+        AddOp[int].create(path=(), value="123")  # ty: ignore[invalid-argument-type] -- for testing purposes
