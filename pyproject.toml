@@ -101,3 +101,6 @@ ignore = [
 "bin/**/*.py" = [
     "D",
 ]
+
+[tool.ty.terminal]
+error-on-warning = true
