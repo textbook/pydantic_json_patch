@@ -24,7 +24,7 @@ jobs:
           - "3.14"
     steps:
       - uses: actions/checkout@v6
-      - uses: astral-sh/setup-uv@v7
+      - uses: astral-sh/setup-uv@08807647e7069bb48b6ef5acd8ec9567f424441b # v8.1.0
         with:
           python-version: ${{ matrix.python }}
       - run: uv sync --dev --locked
@@ -56,7 +56,7 @@ jobs:
         with:
           name: coverage-report
           path: coverage/
-      - uses: SonarSource/sonarqube-scan-action@v7
+      - uses: SonarSource/sonarqube-scan-action@299e4b793aaa83bf2aba7c9c14bedbb485688ec4 # v7.10.0
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
@@ -68,7 +68,7 @@ jobs:
       report: ${{ steps.mutation.outputs.report }}
     steps:
       - uses: actions/checkout@v6
-      - uses: astral-sh/setup-uv@v7
+      - uses: astral-sh/setup-uv@08807647e7069bb48b6ef5acd8ec9567f424441b # v8.1.0
       - run: echo "report=$(uv run python ./bin/mutation.py)" >> "$GITHUB_OUTPUT"
         id: mutation
       - uses: actions/upload-artifact@v7
@@ -83,7 +83,7 @@ jobs:
       - test
     steps:
       - uses: actions/checkout@v6
-      - uses: astral-sh/setup-uv@v7
+      - uses: astral-sh/setup-uv@08807647e7069bb48b6ef5acd8ec9567f424441b # v8.1.0
       - if: ${{ startsWith(github.ref, 'refs/tags/v') }}
         run: uv version ${{ github.ref_name }}
       - run: uv build
@@ -108,7 +108,7 @@ jobs:
         with:
           name: package
           path: dist/
-      - uses: pypa/gh-action-pypi-publish@release/v1
+      - uses: pypa/gh-action-pypi-publish@cef221092ed1bacb1cc03d23a2d87d1d172e277b # v1.14.0
 
   deploy-gh-release:
     if: ${{ startsWith(github.ref, 'refs/tags/v') }}
@@ -136,7 +136,7 @@ jobs:
       - uses: actions/setup-python@v6
         with:
           python-version: "3.10"
-      - uses: Wandalen/wretry.action@v3
+      - uses: Wandalen/wretry.action@e68c23e6309f2871ca8ae4763e7629b9c258e1ea # v3.8.0
         with:
           attempt_delay: 60000
           attempt_limit: 10
