@@ -18,7 +18,8 @@ updates:
     cooldown:
       default-days: 7
     groups:
-      uv-minor-patch:
+      uv-dev-minor-patch:
+        dependency-type: development
         patterns:
           - '*'
         update-types:
