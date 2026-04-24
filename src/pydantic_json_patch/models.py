@@ -16,6 +16,7 @@ from pydantic import (
     model_validator,
 )
 
+_CACHE_SIZE = 1_024  # pragma: no mutate
 _JSON_POINTER = re.compile(r"^(?:/(?:[^/~]|~[01])*)*$")
 
 T = tx.TypeVar("T", default=tp.Any)
@@ -30,6 +31,16 @@ def _generate_title(model: type[tp.Any]) -> str:
         msg = f"{name!r} does not end with 'Op'"
         raise ValueError(msg)
     return "".join(("JsonPatch", name, "eration", *rest))
+
+
+@lru_cache(maxsize=_CACHE_SIZE)
+def _decode_token(token: str) -> str:
+    return token.replace("~1", "/").replace("~0", "~")
+
+
+@lru_cache(maxsize=_CACHE_SIZE)
+def _encode_token(token: str) -> str:
+    return token.replace("~", "~0").replace("/", "~1")
 
 
 class _BaseOp(BaseModel):
@@ -60,22 +71,12 @@ class _BaseOp(BaseModel):
     def _dump_pointer(cls, pointer: Sequence[str]) -> str:
         if isinstance(pointer, str):
             return pointer
-        return "/".join(["", *(cls._encode_token(token) for token in pointer)])
+        return "/".join(["", *(_encode_token(token) for token in pointer)])
 
     @staticmethod
-    @lru_cache
-    def _decode_token(token: str) -> str:
-        return token.replace("~1", "/").replace("~0", "~")
-
-    @staticmethod
-    @lru_cache
-    def _encode_token(token: str) -> str:
-        return token.replace("~", "~0").replace("/", "~1")
-
-    @classmethod
-    @lru_cache
-    def _load_pointer(cls, pointer: str) -> tuple[str, ...]:
-        return tuple(cls._decode_token(token) for token in pointer.split("/")[1:])
+    @lru_cache(maxsize=_CACHE_SIZE)
+    def _load_pointer(pointer: str) -> tuple[str, ...]:
+        return tuple(_decode_token(token) for token in pointer.split("/")[1:])
 
 
 class _FromOp(_BaseOp):
