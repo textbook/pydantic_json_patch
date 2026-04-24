@@ -224,7 +224,9 @@ class JsonPatch(RootModel[Sequence[Operation]], Sequence[Operation]):
     @model_validator(mode="before")
     @classmethod
     def _coerce_seq_to_tuple(cls, value: tp.Any) -> tp.Any:  # noqa: ANN401
-        if isinstance(value, Sequence) and not isinstance(value, tuple):
+        if isinstance(value, tuple):
+            return value
+        if isinstance(value, Sequence):
             return tuple(value)
         return value
 
