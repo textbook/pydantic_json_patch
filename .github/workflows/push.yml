@@ -140,6 +140,7 @@ jobs:
         with:
           retry_wait_seconds: 60
           max_attempts: 10
+          timeout_minutes: 15
           command: pip install "pydantic-json-patch==${VERSION#v}"
         env:
           VERSION: ${{ github.ref_name }}
