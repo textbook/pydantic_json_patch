@@ -84,6 +84,7 @@ python_classes = []  # avoid trying to run TestOp as a test
 select = ["ALL"]
 ignore = [
     "COM812",
+    "CPY001",
     "D203",
     "D213",
     "D105",

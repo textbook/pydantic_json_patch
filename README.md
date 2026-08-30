@@ -109,8 +109,7 @@ app = FastAPI()
 
 
 @app.patch("/resource/{resource_id}")
-def _(resource_id: UUID, operations: tp.Annotated[JsonPatch, Body()]) -> ...:
-    ...
+def _(resource_id: UUID, operations: tp.Annotated[JsonPatch, Body()]) -> ...: ...
 ```
 
 This will provide a sensible example of the request body:
@@ -140,9 +139,10 @@ app = FastAPI()
 @app.patch("/resource/{resource_id}")
 def _(
     resource_id: UUID,
-    operations: tp.Annotated[list[tp.Annotated[AddOp[int] | TestOp[int], Discriminator("op")]], Body()],
-) -> ...:
-    ...
+    operations: tp.Annotated[
+        list[tp.Annotated[AddOp[int] | TestOp[int], Discriminator("op")]], Body()
+    ],
+) -> ...: ...
 ```
 
 **Notes**:
