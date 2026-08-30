@@ -121,7 +121,7 @@ class _ValueOp(_BaseOp, tp.Generic[T]):
         """Propagate docstring to generic alias."""
         alias = super().__class_getitem__(typevar_values)
         alias.__doc__ = cls.__doc__
-        return alias
+        return tp.cast("type[BaseModel]", alias)
 
     @classmethod
     def create(cls, /, *, path: str | Sequence[str], value: T) -> tx.Self:  # ty: ignore[invalid-method-override] -- deliberately narrows **kwargs to named params
