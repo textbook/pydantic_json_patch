@@ -93,6 +93,7 @@ jobs:
   build:
     runs-on: ubuntu-slim
     needs:
+      - lower-bound
       - test
     steps:
       - uses: actions/checkout@v7
