@@ -21,6 +21,8 @@ _JSON_POINTER = re.compile(r"^(?:/(?:[^/~]|~[01])*)*$")
 
 T = tx.TypeVar("T", default=tp.Any)
 
+_OpName: tp.TypeAlias = tp.Literal["add", "copy", "move", "remove", "replace", "test"]
+
 # region base models
 
 
@@ -53,10 +55,15 @@ class _BaseOp(BaseModel):
     @classmethod
     def create(cls, /, *, path: str | Sequence[str], **kwargs: tp.Any) -> tx.Self:  # noqa: ANN401
         """Return an instance of the appropriate operation."""
-        (op,) = tp.get_args(cls.model_fields["op"].annotation)
-        return cls(op=op, path=cls._dump_pointer(path), **kwargs)
+        return cls(op=cls._op_literal(), path=cls._dump_pointer(path), **kwargs)
 
-    op: tp.Literal["add", "copy", "move", "remove", "replace", "test"]
+    @classmethod
+    @lru_cache(maxsize=_CACHE_SIZE)
+    def _op_literal(cls) -> _OpName:
+        (op,) = tp.get_args(cls.model_fields["op"].annotation)
+        return op
+
+    op: _OpName
     """The operation being represented."""
 
     path: str = Field(examples=["/a/b/c"], pattern=_JSON_POINTER)
